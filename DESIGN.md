@@ -57,7 +57,11 @@ Mobile-first, one breakpoint at 768px.
   - Mobile: input on the left, swatch on the right (space-between). From 768px: swatch right after the input, 16px gap.
   - Input: transparent background, no border except a 1px bottom border in `--cc-line`, 6px bottom padding, width fits 7 characters.
   - Hint text 12px muted. Error text 12px ink.
-- **Actions group**: mobile is a 2-column grid (Swap, Suggest) with the target level select at full width. From 768px a wrapping row. Keyboard order stays: Swap, Target level, Suggest. The live message is 12px muted, below.
+- **Actions group**: contains, in this order in the DOM and on screen: the Swap colors button, the Target level select and the Suggest accessible text color button, followed by the (live) message (12px, muted). Visual order and focus order are the same (WCAG 2.4.3).
+  - Visible group label "Actions" (12px, muted), decorative (`aria-hidden`), aligned with the "Text" and "Background" labels. The suggestion section keeps its h2 "Suggestion", visually hidden.
+  - Mobile: the three controls stacked at full width, 8px gap.
+  - From 768px: Swap at automatic width; below it, the select and Suggest side by side in a row that wraps when space runs out.
+  - The Swap button sits outside the "Colors" fieldset, right after it in the DOM. The fieldset contains only the Text and Background groups.
 - **Buttons and select**: height 44px, padding `0 16px`, radius 2px, 13px. Buttons on `--cc-tint` with ink text and no border. The select is transparent with a 1px `--cc-line` border.
 - **Results**: `margin-top: 72px`, `padding-top: 40px`, 1px hairline top border.
   - Mobile: stacked. From 768px: a wrapping row with gap `48px 64px`, ratio block (`flex: 1 1 380px`) and criteria table (`flex: 1 1 400px`).
