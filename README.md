@@ -86,7 +86,7 @@ bunx playwright install chromium   # once, for the end-to-end tests
 
 ```bash
 bun run dev:next      # Next.js on http://localhost:3000
-bun run dev:nuxt      # Nuxt on http://localhost:3000
+bun run dev:nuxt      # Nuxt on http://localhost:3001
 bun run lint          # Biome
 bun run typecheck     # tsc in core and next, nuxt typecheck in nuxt
 bun run test          # Vitest
