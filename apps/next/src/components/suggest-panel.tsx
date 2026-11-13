@@ -16,27 +16,20 @@ export function SuggestPanel({
   message,
 }: SuggestPanelProps) {
   return (
-    <section
-      aria-labelledby="suggest-heading"
-      className="flex flex-col gap-gutter"
-    >
-      <h2 id="suggest-heading" className="text-xl font-semibold">
+    <section aria-labelledby="suggest-heading" className="flex flex-col gap-2">
+      <h2 id="suggest-heading" className="sr-only">
         Suggestion
       </h2>
-      <p className="text-muted">
-        Keeps the hue and saturation of the text color and adjusts only its
-        lightness until the target is met.
-      </p>
-      <div className="flex flex-wrap items-end gap-gutter">
-        <div className="flex flex-col gap-tight">
-          <label htmlFor="target" className="font-semibold">
+      <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-end">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="target" className="text-label text-ink-muted">
             Target level
           </label>
           <select
             id="target"
             value={target}
             onChange={(e) => onTargetChange(e.target.value as SuggestionTarget)}
-            className="h-11 rounded-control border border-edge bg-page px-3 text-ink"
+            className="h-control w-full rounded-control border border-line bg-transparent px-4 text-ui text-ink md:w-auto"
           >
             <option value="AA">AA normal text (4.5:1)</option>
             <option value="AAA">AAA normal text (7:1)</option>
@@ -46,13 +39,17 @@ export function SuggestPanel({
           type="button"
           onClick={onSuggest}
           disabled={disabled}
-          className="h-11 cursor-pointer rounded-control bg-accent px-gutter font-semibold text-on-accent disabled:cursor-not-allowed disabled:opacity-60"
+          className="cc-press h-control w-full cursor-pointer rounded-control bg-tint px-4 text-ui text-ink disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
         >
           Suggest accessible text color
         </button>
       </div>
-      <p aria-live="polite" className="min-h-6">
+      <p aria-live="polite" className="min-h-6 text-label text-ink-muted">
         {message}
+      </p>
+      <p className="max-w-summary text-label text-ink-muted">
+        Keeps the hue and saturation of the text color and adjusts only its
+        lightness until the target is met.
       </p>
     </section>
   );
