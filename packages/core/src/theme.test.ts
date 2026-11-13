@@ -52,22 +52,32 @@ describe("deriveTheme", () => {
   for (const [fg, bg] of PAIRS) {
     describe(`${fg} on ${bg}`, () => {
       const theme = deriveTheme(rgb(fg), rgb(bg));
+      const passesAa = ratio(fg, bg) >= 4.5;
 
       it("keeps the chosen background as the surface", () => {
         expect(theme.surface).toBe(bg);
       });
 
-      it("makes ink readable: 7:1 when reachable, never below 4.5:1", () => {
-        const reachable = ["#000000", "#FFFFFF"].some(
-          (extreme) => ratio(extreme, bg) >= 7,
-        );
-        const inkRatio = ratio(theme.ink, bg);
-        expect(inkRatio).toBeGreaterThanOrEqual(4.5);
-        if (reachable && rgbToHsl(rgb(fg)).s === 0) {
-          // A neutral can always slide to black or white, so 7:1 is reachable.
-          expect(inkRatio).toBeGreaterThanOrEqual(7);
+      if (passesAa) {
+        it("uses the exact chosen text color as ink", () => {
+          expect(theme.ink).toBe(fg);
+        });
+      } else {
+        it("adjusts ink to at least 4.5:1", () => {
+          expect(ratio(theme.ink, bg)).toBeGreaterThanOrEqual(4.5);
+        });
+
+        const { s } = rgbToHsl(rgb(fg));
+        const adjusted = !["#141416", "#FAFAF7"].includes(theme.ink);
+        if (s > 0 && adjusted) {
+          it("preserves the hue of a chromatic text color", () => {
+            const diff = Math.abs(
+              rgbToHsl(rgb(theme.ink)).h - rgbToHsl(rgb(fg)).h,
+            );
+            expect(Math.min(diff, 360 - diff)).toBeLessThan(4);
+          });
         }
-      });
+      }
 
       it("keeps muted ink, line and tint legible", () => {
         expect(ratio(theme.inkMuted, bg)).toBeGreaterThanOrEqual(4.5);
@@ -94,37 +104,10 @@ describe("deriveTheme", () => {
     });
   }
 
-  it("reaches 7:1 whenever the suggestion can", () => {
-    for (const [fg, bg] of [
-      ["#777777", "#FFFFFF"],
-      ["#FF3211", "#FFFFFF"],
-      ["#5B7BB5", "#12151C"],
-      ["#FFFF00", "#FFFFFF"],
-    ] as const) {
-      expect(
-        ratio(deriveTheme(rgb(fg), rgb(bg)).ink, bg),
-      ).toBeGreaterThanOrEqual(7);
-    }
-  });
-
-  it("preserves the hue of chromatic text colors", () => {
-    for (const [fg, bg] of [
-      ["#FF3211", "#FFFFFF"],
-      ["#5B7BB5", "#12151C"],
-      ["#FFFF00", "#FFFFFF"],
-    ] as const) {
-      const ink = rgbToHsl(rgb(deriveTheme(rgb(fg), rgb(bg)).ink));
-      const original = rgbToHsl(rgb(fg));
-      const diff = Math.abs(ink.h - original.h);
-      expect(Math.min(diff, 360 - diff)).toBeLessThan(4);
-    }
-  });
-
   it("falls back to near-black or near-white when no tone of the text color reaches 4.5:1", () => {
-    // Mid-gray on mid-gray: only a darker tone reaches 4.5:1, never 7:1.
+    // Mid-gray on mid-gray: no lightness of the same gray works, but a darker tone does.
     const theme = deriveTheme(rgb("#808080"), rgb("#808080"));
     expect(ratio(theme.ink, "#808080")).toBeGreaterThanOrEqual(4.5);
-    expect(ratio(theme.ink, "#808080")).toBeLessThan(7);
   });
 });
 

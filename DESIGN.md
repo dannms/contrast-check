@@ -14,15 +14,16 @@ Direction: minimalism in the style of Scale (hihayk.github.io/scale) combined wi
 
 Computed by `deriveTheme` in `packages/core` and exposed as CSS custom properties on the app root.
 
-| Role             | Rule                                                                                                                                                                                                            |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--cc-surface`   | The chosen background.                                                                                                                                                                                          |
-| `--cc-ink`       | The closest tone of the chosen text color (same hue and saturation, HSL lightness only) reaching 7:1 on the surface. If impossible, 4.5:1. If still impossible, the higher-contrast of `#141416` and `#FAFAF7`. |
-| `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.6:1. Labels and secondary text.                                                                                                        |
-| `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                        |
-| `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                           |
-| `--cc-tint`      | Ink mixed 90% toward the surface. Button fill. Ink on tint must be at least 4.5:1.                                                                                                                              |
+| Role             | Rule                                                                                                                                                                                                                              |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--cc-surface`   | The chosen background.                                                                                                                                                                                                            |
+| `--cc-ink`       | The chosen text color, unaltered, when the pair reaches 4.5:1 (AA). Otherwise the closest tone of it (same hue and saturation, HSL lightness only) reaching 4.5:1. If impossible, the higher-contrast of `#141416` and `#FAFAF7`. |
+| `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.5:1. When ink is already close to 4.5:1 it can equal ink. Labels and secondary text.                                                                     |
+| `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                                          |
+| `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                                             |
+| `--cc-tint`      | Ink mixed 90% toward the surface. Button fill. Ink on tint must be at least 4.5:1.                                                                                                                                                |
 
+- Why ink keeps the exact color: pairs that pass AA appear exactly as chosen, as in Realtime Colors. Only failing pairs get an adjusted tone in the interface, and the specimen always shows the exact color.
 - Focus ring: `2px solid var(--cc-ink)`, offset 3px.
 - While an input holds an invalid hex, the theme keeps the last valid pair, so nothing flashes.
 - The theme is computed on the server from the URL state, so the first paint is already themed.
@@ -86,7 +87,7 @@ Mobile-first, one breakpoint at 768px.
 
 ## 7. Accessibility floors
 
-- Chrome text at least 4.5:1, and ink at least 7:1 when reachable.
+- Chrome text at least 4.5:1.
 - Control boundaries at least 3:1.
 - The specimen is exempt by design: it is the thing being tested.
 - Existing labels, ids, aria attributes, headings and `data-testid` values are a contract with the E2E suite and must not change.

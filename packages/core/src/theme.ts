@@ -18,7 +18,7 @@ export type Theme = {
 const FALLBACK_DARK: Rgb = { r: 0x14, g: 0x14, b: 0x16 };
 const FALLBACK_LIGHT: Rgb = { r: 0xfa, g: 0xfa, b: 0xf7 };
 
-const MUTED_MIN_RATIO = 4.6;
+const MUTED_MIN_RATIO = 4.5;
 const LINE_MIN_RATIO = 3.1;
 const HAIRLINE_T = 0.84;
 const TINT_T = 0.9;
@@ -54,13 +54,14 @@ export function fadeToward(ink: Rgb, surface: Rgb, minRatio: number): Rgb {
   return mix(ink, surface, lo);
 }
 
-/** Closest tone of `fg` reaching 7:1 on `bg`, else 4.5:1, else black or white. */
+/**
+ * `fg` itself when the pair passes AA (the suggestion returns it unchanged),
+ * else the closest tone of `fg` reaching 4.5:1, else near-black or near-white.
+ */
 function pickInk(fg: Rgb, bg: Rgb): Rgb {
-  for (const target of ["AAA", "AA"] as const) {
-    const suggestion = suggestTextColor(fg, bg, target);
-    const rgb = suggestion && parseHex(suggestion.hex);
-    if (rgb) return rgb;
-  }
+  const suggestion = suggestTextColor(fg, bg, "AA");
+  const rgb = suggestion && parseHex(suggestion.hex);
+  if (rgb) return rgb;
   return contrastRatio(FALLBACK_DARK, bg) >= contrastRatio(FALLBACK_LIGHT, bg)
     ? FALLBACK_DARK
     : FALLBACK_LIGHT;
