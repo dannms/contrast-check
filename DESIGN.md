@@ -14,14 +14,14 @@ Direction: minimalism in the style of Scale (hihayk.github.io/scale) combined wi
 
 Computed by `deriveTheme` in `packages/core` and exposed as CSS custom properties on the app root.
 
-| Role | Rule |
-| --- | --- |
-| `--cc-surface` | The chosen background. |
-| `--cc-ink` | The closest tone of the chosen text color (same hue and saturation, HSL lightness only) reaching 7:1 on the surface. If impossible, 4.5:1. If still impossible, the higher-contrast of `#141416` and `#FAFAF7`. |
-| `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.6:1. Labels and secondary text. |
-| `--cc-line` | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11). |
-| `--cc-hairline` | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary. |
-| `--cc-tint` | Ink mixed 90% toward the surface. Button fill. Ink on tint must be at least 4.5:1. |
+| Role             | Rule                                                                                                                                                                                                            |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--cc-surface`   | The chosen background.                                                                                                                                                                                          |
+| `--cc-ink`       | The closest tone of the chosen text color (same hue and saturation, HSL lightness only) reaching 7:1 on the surface. If impossible, 4.5:1. If still impossible, the higher-contrast of `#141416` and `#FAFAF7`. |
+| `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.6:1. Labels and secondary text.                                                                                                        |
+| `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                        |
+| `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                           |
+| `--cc-tint`      | Ink mixed 90% toward the surface. Button fill. Ink on tint must be at least 4.5:1.                                                                                                                              |
 
 - Focus ring: `2px solid var(--cc-ink)`, offset 3px.
 - While an input holds an invalid hex, the theme keeps the last valid pair, so nothing flashes.
@@ -32,16 +32,16 @@ Computed by `deriveTheme` in `packages/core` and exposed as CSS custom propertie
 
 DM Mono only, weights 300, 400 and 500, self-hosted (no Google Fonts CDN).
 
-| Element | Style |
-| --- | --- |
-| Labels and table headers | 12px / 400, muted |
-| UI text, buttons, table rows | 13px |
-| h1 "Contrast Check" | 14px / 500 |
-| Hex inputs | `clamp(36px, 4.2vw, 48px)` / 300, line-height 1 |
-| Ratio | `clamp(104px, 15vw, 196px)` / 300, line-height 0.85, letter-spacing -0.045em, no wrap. The ":1" at 0.36em, muted, letter-spacing 0 |
-| Specimen, large | 56px / 300, line-height 1.05, letter-spacing -0.02em |
-| Specimen, medium | 24px / 500, line-height 1.3 |
-| Specimen, body | 16px / 400, line-height 1.6, max 66ch |
+| Element                      | Style                                                                                                                              |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Labels and table headers     | 12px / 400, muted                                                                                                                  |
+| UI text, buttons, table rows | 13px                                                                                                                               |
+| h1 "Contrast Check"          | 14px / 500                                                                                                                         |
+| Hex inputs                   | `clamp(36px, 4.2vw, 48px)` / 300, line-height 1                                                                                    |
+| Ratio                        | `clamp(104px, 15vw, 196px)` / 300, line-height 0.85, letter-spacing -0.045em, no wrap. The ":1" at 0.36em, muted, letter-spacing 0 |
+| Specimen, large              | 56px / 300, line-height 1.05, letter-spacing -0.02em                                                                               |
+| Specimen, medium             | 24px / 500, line-height 1.3                                                                                                        |
+| Specimen, body               | 16px / 400, line-height 1.6, max 66ch                                                                                              |
 
 ## 4. Layout
 
