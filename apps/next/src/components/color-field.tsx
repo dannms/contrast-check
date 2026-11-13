@@ -1,4 +1,4 @@
-import { parseHex, toHex } from "@/lib/color";
+import { parseHex, toHex } from "@contrast-check/core";
 
 type ColorFieldProps = {
   id: string;

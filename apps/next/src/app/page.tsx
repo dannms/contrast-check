@@ -1,5 +1,5 @@
+import { DEFAULT_BG, DEFAULT_FG, hexFromParam } from "@contrast-check/core";
 import { ContrastChecker } from "@/components/contrast-checker";
-import { DEFAULT_BG, DEFAULT_FG, hexFromParam } from "@/lib/url-state";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 

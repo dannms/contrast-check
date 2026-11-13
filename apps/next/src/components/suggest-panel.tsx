@@ -1,4 +1,4 @@
-import type { SuggestionTarget } from "@/lib/color";
+import type { SuggestionTarget } from "@contrast-check/core";
 
 type SuggestPanelProps = {
   target: SuggestionTarget;

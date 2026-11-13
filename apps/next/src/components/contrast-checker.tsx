@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
+  buildQuery,
   evaluate,
   formatRatio,
   parseHex,
   type SuggestionTarget,
   suggestTextColor,
   toHex,
-} from "@/lib/color";
-import { buildQuery } from "@/lib/url-state";
+} from "@contrast-check/core";
+import { useEffect, useState } from "react";
 import { ColorField } from "./color-field";
 import { Preview } from "./preview";
 import { Results } from "./results";

@@ -1,4 +1,4 @@
-import { type Evaluation, formatRatio } from "@/lib/color";
+import { type Evaluation, formatRatio } from "@contrast-check/core";
 import { StatusBadge } from "./status-badge";
 
 type ResultsProps = {
