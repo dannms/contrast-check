@@ -14,7 +14,8 @@
     "lint": "biome check",
     "typecheck": "bun run --filter '*' typecheck",
     "test": "bun run --filter @contrast-check/core test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "screenshots": "bun run --filter @contrast-check/next build && bun scripts/screenshots.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
