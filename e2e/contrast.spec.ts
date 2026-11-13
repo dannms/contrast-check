@@ -77,3 +77,22 @@ test("state is read from the URL and written back", async ({ page }) => {
   await expect(page).toHaveURL(/fg=000000/);
   await expect(page).toHaveURL(/bg=ffffff/);
 });
+
+test("live summary updates when the colors change", async ({ page }) => {
+  await page.goto("/");
+  const summary = page.getByTestId("live-summary");
+  await expect(summary).toHaveAttribute("aria-live", "polite");
+
+  await textInput(page).fill("#000000");
+  await backgroundInput(page).fill("#FFFFFF");
+  await expect(summary).toHaveText("21.00:1. Passes all criteria.");
+
+  await textInput(page).fill("#777777");
+  await expect(summary).toHaveText(/^4\.48:1\. Passes AA large text/);
+  await expect(summary).toContainText("Fails AA normal text");
+
+  await textInput(page).fill("#12");
+  await expect(summary).toHaveText(
+    "Enter two valid hex colors to see the contrast ratio.",
+  );
+});

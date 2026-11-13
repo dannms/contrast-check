@@ -1,11 +1,11 @@
-import { type Evaluation, formatRatio } from "@contrast-check/core";
+import { type Evaluation, formatRatio, summarize } from "@contrast-check/core";
 import { StatusBadge } from "./status-badge";
 
 type ResultsProps = {
   evaluation: Evaluation | null;
 };
 
-/** Contrast ratio and per-criterion results, announced politely on change. */
+/** Contrast ratio and per-criterion results, plus a concise live summary. */
 export function Results({ evaluation }: ResultsProps) {
   return (
     <section
@@ -15,7 +15,17 @@ export function Results({ evaluation }: ResultsProps) {
       <h2 id="results-heading" className="text-xl font-semibold">
         Results
       </h2>
-      <div aria-live="polite" className="flex flex-col gap-gutter">
+      <p
+        data-testid="live-summary"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {evaluation
+          ? summarize(evaluation)
+          : "Enter two valid hex colors to see the contrast ratio."}
+      </p>
+      <div className="flex flex-col gap-gutter">
         {evaluation ? (
           <>
             <p>

@@ -6,6 +6,7 @@ import {
   parseHex,
   rgbToHsl,
   suggestTextColor,
+  summarize,
   toHex,
 } from "./color";
 
@@ -120,5 +121,25 @@ describe("suggestTextColor", () => {
 describe("toHex", () => {
   it("formats uppercase #RRGGBB", () => {
     expect(toHex(rgb("#0af"))).toBe("#00AAFF");
+  });
+});
+
+describe("summarize", () => {
+  it("lists passing and failing criteria", () => {
+    expect(summarize(evaluate(rgb("#767676"), rgb("#FFFFFF")))).toBe(
+      "4.54:1. Passes AA normal text, AA large text, AAA large text, UI components and graphics. Fails AAA normal text.",
+    );
+  });
+
+  it("says all criteria pass without an empty list", () => {
+    expect(summarize(evaluate(rgb("#000000"), rgb("#FFFFFF")))).toBe(
+      "21.00:1. Passes all criteria.",
+    );
+  });
+
+  it("says all criteria fail without an empty list", () => {
+    expect(summarize(evaluate(rgb("#FFFFFF"), rgb("#FFFFFF")))).toBe(
+      "1.00:1. Fails all criteria.",
+    );
   });
 });

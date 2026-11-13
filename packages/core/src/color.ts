@@ -199,3 +199,20 @@ export function suggestTextColor(
   const color = at(best);
   return { hex: toHex(color), ratio: contrastRatio(color, bg) };
 }
+
+/**
+ * Short, screen-reader friendly summary of an evaluation, e.g.
+ * "4.54:1. Passes AA normal text, AA large text. Fails AAA normal text."
+ */
+export function summarize(evaluation: Evaluation): string {
+  const passed = evaluation.criteria.filter((c) => c.pass).map((c) => c.label);
+  const failed = evaluation.criteria.filter((c) => !c.pass).map((c) => c.label);
+  const parts = [`${formatRatio(evaluation.ratio)}.`];
+  if (failed.length === 0) parts.push("Passes all criteria.");
+  else if (passed.length === 0) parts.push("Fails all criteria.");
+  else {
+    parts.push(`Passes ${passed.join(", ")}.`);
+    parts.push(`Fails ${failed.join(", ")}.`);
+  }
+  return parts.join(" ");
+}
