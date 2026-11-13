@@ -17,6 +17,12 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**/Results.vue"],
+      "linter": {
+        "rules": { "style": { "useVueMultiWordComponentNames": "off" } }
+      }
     }
   ]
 }
