@@ -9,13 +9,19 @@ type App = {
   command: (port: number) => string;
 };
 
-// To add another app (e.g. Nuxt), append an entry here with its own port.
+// To add another app, append an entry here with its own port.
 const apps: App[] = [
   {
     name: "next",
     port: 3100,
     cwd: "apps/next",
     command: (port) => `bun run build && bunx next start -p ${port}`,
+  },
+  {
+    name: "nuxt",
+    port: 3200,
+    cwd: "apps/nuxt",
+    command: (port) => `bun run build && bunx nuxt preview --port ${port}`,
   },
 ];
 

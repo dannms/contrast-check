@@ -8,8 +8,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun run --filter @contrast-check/next dev",
-    "build": "bun run --filter @contrast-check/next build",
+    "dev:next": "bun run --filter @contrast-check/next dev",
+    "dev:nuxt": "bun run --filter @contrast-check/nuxt dev",
+    "build": "bun run --filter @contrast-check/next --filter @contrast-check/nuxt build",
     "lint": "biome check",
     "typecheck": "bun run --filter '*' typecheck",
     "test": "bun run --filter @contrast-check/core test",
