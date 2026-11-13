@@ -20,3 +20,16 @@ for (const scheme of ["light", "dark"] as const) {
     expect(results.violations).toEqual([]);
   });
 }
+
+test("keeps the interface accessible with a failing pair, outside the specimen", async ({
+  page,
+}, testInfo) => {
+  // Enabled once the Nuxt app receives the redesign.
+  test.skip(testInfo.project.name === "nuxt");
+  await page.goto("/?fg=EEEEEE&bg=FFFFFF");
+  await expect(page.getByTestId("specimen")).toBeVisible();
+  const results = await new AxeBuilder({ page })
+    .exclude('[data-testid="specimen"]')
+    .analyze();
+  expect(results.violations).toEqual([]);
+});

@@ -96,3 +96,17 @@ test("live summary updates when the colors change", async ({ page }) => {
     "Enter two valid hex colors to see the contrast ratio.",
   );
 });
+
+test("shows an approved pair exactly as chosen", async ({ page }, testInfo) => {
+  // Enabled once the Nuxt app receives the redesign.
+  test.skip(testInfo.project.name === "nuxt");
+  await page.goto("/?fg=000000&bg=FFFFFF");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCSS(
+    "color",
+    "rgb(0, 0, 0)",
+  );
+  await expect(page.getByTestId("app-root")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+});
