@@ -4,22 +4,35 @@
   "workspaces": {
     "": {
       "name": "contrast-check",
+      "devDependencies": {
+        "@axe-core/playwright": "^4.14.0",
+        "@biomejs/biome": "^2.6.7",
+        "@playwright/test": "^1.65.0",
+        "typescript": "^7.0.2",
+      },
+    },
+    "apps/next": {
+      "name": "@contrast-check/next",
+      "version": "0.1.0",
       "dependencies": {
+        "@contrast-check/core": "workspace:*",
         "next": "^16.4.6",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
       },
       "devDependencies": {
-        "@axe-core/playwright": "^4.14.0",
-        "@biomejs/biome": "^2.6.7",
-        "@playwright/test": "^1.65.0",
         "@tailwindcss/postcss": "^4.3.5",
         "@types/node": "^26.6.6",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
         "postcss": "^8.5.32",
         "tailwindcss": "^4.3.5",
-        "typescript": "^7.0.2",
+      },
+    },
+    "packages/core": {
+      "name": "@contrast-check/core",
+      "version": "0.1.0",
+      "devDependencies": {
         "vitest": "^5.1.0",
       },
     },
@@ -50,6 +63,10 @@
     "@biomejs/cli-win32-arm64": ["@biomejs/cli-win32-arm64@2.6.7", "", { "os": "win32", "cpu": "arm64" }, "sha512-2nLivZfgcGMIXP/bI8w1FZP5JE2MetP+XZInyMQ7SvJBKlDoGrm/nRjN7uUi9dOaaSlpbRWkHSfb7PqcQR3nXg=="],
 
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.6.7", "", { "os": "win32", "cpu": "x64" }, "sha512-uYfH+n+IAtVz3lh7m6JxdjxfJ3WCvAJDE3spHIUbU955V42oKymlhiQiu92fAhXZb7KOjvRcrfImySQbc1MFFg=="],
+
+    "@contrast-check/core": ["@contrast-check/core@workspace:packages/core"],
+
+    "@contrast-check/next": ["@contrast-check/next@workspace:apps/next"],
 
     "@emnapi/core": ["@emnapi/core@2.0.0-beta.2", "", { "dependencies": { "@emnapi/wasi-threads": "2.2.0", "tslib": "^2.4.0" } }, "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A=="],
 
