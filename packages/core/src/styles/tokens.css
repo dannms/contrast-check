@@ -3,91 +3,164 @@
 @import "@fontsource/dm-mono/500.css";
 
 /*
- * Design tokens. Raw values live in custom properties (light by default,
- * dark under prefers-color-scheme) and are exposed to Tailwind through @theme.
- * Every text/background pair is >= 4.5:1; control borders and focus rings are >= 3:1.
+ * Design tokens, see DESIGN.md.
+ *
+ * The colors are roles of the derived theme. The app overrides them on its root
+ * element with deriveTheme(...) and themeToCssVars(...); the values below are only
+ * the fallback and equal deriveTheme(DEFAULT_FG, DEFAULT_BG) from packages/core.
  */
 :root {
-  color-scheme: light dark;
-
-  --bg: #ffffff;
-  --ink: #171717;
-  --ink-muted: #525252;
-  --rule: #d4d4d8;
-  --control-edge: #737373;
-  --accent-bg: #1d4ed8;
-  --accent-ink: #ffffff;
-  --pass-ink: #15803d;
-  --fail-ink: #b91c1c;
-  --focus-ring: #1d4ed8;
-
-  --space-gutter: 1rem;
-  --space-stack: 1.5rem;
-  --space-section: 2.5rem;
-  --space-tight: 0.5rem;
-
-  --radius-control: 0.375rem;
-
-  --font-stack-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-stack-mono: ui-monospace, "SF Mono", Consolas, monospace;
-
-  --size-sample: 1rem;
-  --size-sample-large: 1.5rem;
-  --size-ratio: 3rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b0b0f;
-    --ink: #f4f4f5;
-    --ink-muted: #a1a1aa;
-    --rule: #3f3f46;
-    --control-edge: #8a8a94;
-    --accent-bg: #8ab4ff;
-    --accent-ink: #0b0b0f;
-    --pass-ink: #4ade80;
-    --fail-ink: #f87171;
-    --focus-ring: #8ab4ff;
-  }
+  --cc-surface: #ffffff;
+  --cc-ink: #6b7280;
+  --cc-ink-muted: #707785;
+  --cc-line: #8d929d;
+  --cc-hairline: #e7e8eb;
+  --cc-tint: #f6f7f7;
 }
 
 @theme inline {
-  --color-page: var(--bg);
-  --color-ink: var(--ink);
-  --color-muted: var(--ink-muted);
-  --color-rule: var(--rule);
-  --color-edge: var(--control-edge);
-  --color-accent: var(--accent-bg);
-  --color-on-accent: var(--accent-ink);
-  --color-pass: var(--pass-ink);
-  --color-fail: var(--fail-ink);
-  --color-focus: var(--focus-ring);
+  --color-surface: var(--cc-surface);
+  --color-ink: var(--cc-ink);
+  --color-ink-muted: var(--cc-ink-muted);
+  --color-line: var(--cc-line);
+  --color-hairline: var(--cc-hairline);
+  --color-tint: var(--cc-tint);
+}
 
-  --spacing-gutter: var(--space-gutter);
-  --spacing-stack: var(--space-stack);
-  --spacing-section: var(--space-section);
-  --spacing-tight: var(--space-tight);
+@theme static {
+  /* One monospaced family for everything. */
+  --font-sans: "DM Mono", ui-monospace, "SF Mono", Consolas, monospace;
+  --font-mono: "DM Mono", ui-monospace, "SF Mono", Consolas, monospace;
 
-  --radius-control: var(--radius-control);
+  /* Type scale: size, with its line-height, letter-spacing and weight. */
+  --text-label: 12px;
+  --text-label--line-height: 1.4;
+  --text-label--font-weight: 400;
+  --text-ui: 13px;
+  --text-ui--line-height: 1.5;
+  --text-ui--font-weight: 400;
+  --text-title: 14px;
+  --text-title--line-height: 1.4;
+  --text-title--font-weight: 500;
+  --text-input: clamp(36px, 4.2vw, 48px);
+  --text-input--line-height: 1;
+  --text-input--font-weight: 300;
+  --text-ratio: clamp(104px, 15vw, 196px);
+  --text-ratio--line-height: 0.85;
+  --text-ratio--letter-spacing: -0.045em;
+  --text-ratio--font-weight: 300;
+  --text-ratio-unit: 0.36em;
+  --text-spec-lg: 56px;
+  --text-spec-lg--line-height: 1.05;
+  --text-spec-lg--letter-spacing: -0.02em;
+  --text-spec-lg--font-weight: 300;
+  --text-spec-md: 24px;
+  --text-spec-md--line-height: 1.3;
+  --text-spec-md--font-weight: 500;
+  --text-spec-body: 16px;
+  --text-spec-body--line-height: 1.6;
+  --text-spec-body--font-weight: 400;
 
-  --font-sans: var(--font-stack-sans);
-  --font-mono: var(--font-stack-mono);
+  /* Spacing and sizes. */
+  --spacing-gutter: clamp(20px, 4vw, 48px);
+  --spacing-page-top: clamp(28px, 5vw, 64px);
+  --spacing-page-bottom: 48px;
+  --spacing-row-top: clamp(40px, 6vw, 64px);
+  --spacing-group: 28px;
+  --spacing-column: 40px;
+  --spacing-rule: 40px;
+  --spacing-results-top: 72px;
+  --spacing-preview-top: 80px;
+  --spacing-footer-top: 96px;
+  --spacing-row: 13px;
+  --spacing-control: 44px;
+  --spacing-icon: 14px;
+  --spacing-hex: 7ch;
+  --container-page: 1180px;
+  --container-summary: 44ch;
+  --container-prose: 66ch;
+  --container-ratio: 380px;
+  --container-criteria: 400px;
 
-  --text-sample: var(--size-sample);
-  --text-sample-large: var(--size-sample-large);
-  --text-ratio: var(--size-ratio);
+  --radius-control: 2px;
+
+  --ease-press: cubic-bezier(0.23, 1, 0.32, 1);
+  --duration-press: 160ms;
+  --duration-flash: 200ms;
 }
 
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-stack-sans);
+  background: var(--cc-surface);
+  color: var(--cc-ink);
 }
 
 :focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: 2px solid var(--cc-ink);
+  outline-offset: 3px;
+}
+
+/* Native color input shown as a circle. */
+.cc-swatch {
+  appearance: none;
+  width: var(--spacing-control);
+  height: var(--spacing-control);
+  padding: 0;
+  border: 1px solid var(--cc-line);
+  border-radius: 9999px;
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.cc-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.cc-swatch::-webkit-color-swatch {
+  border: 0;
+  border-radius: 9999px;
+}
+
+.cc-swatch::-moz-color-swatch {
+  border: 0;
+  border-radius: 9999px;
+}
+
+/* Press feedback for buttons. */
+.cc-press {
+  transition: transform var(--duration-press) var(--ease-press);
+}
+
+.cc-press:active {
+  transform: scale(0.97);
+}
+
+/* Brief tint on the Text input after a suggestion is applied. */
+@keyframes cc-flash {
+  0%,
+  99.9% {
+    background-color: var(--cc-tint);
+  }
+}
+
+.cc-flash {
+  animation: cc-flash var(--duration-flash) steps(1, end);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled):hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  input[type="text"]:hover,
+  select:hover {
+    border-color: var(--cc-ink);
+  }
+
+  .cc-swatch:hover {
+    border-color: var(--cc-ink);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -96,6 +169,9 @@ body {
   *::after {
     animation: none;
     transition: none;
-    scroll-behavior: auto;
+  }
+
+  .cc-press:active {
+    transform: none;
   }
 }
