@@ -30,6 +30,7 @@ const url = (app: App) => `http://localhost:${app.port}`;
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   projects: apps.map((app) => ({
     name: app.name,
     use: { ...devices["Desktop Chrome"], baseURL: url(app) },
