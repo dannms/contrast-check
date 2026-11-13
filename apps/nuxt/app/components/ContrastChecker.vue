@@ -116,7 +116,7 @@ function suggest() {
     </fieldset>
 
     <ColorPreview v-if="fg && bg" :fg="toHex(fg)" :bg="toHex(bg)" />
-    <Results :evaluation="evaluation" />
+    <ContrastResults :evaluation="evaluation" />
     <SuggestPanel
       :target="target"
       :disabled="!evaluation"
