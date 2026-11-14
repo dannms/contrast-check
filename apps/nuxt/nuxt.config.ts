@@ -16,7 +16,7 @@ export default defineNuxtConfig({
         {
           name: "description",
           content:
-            "Check text and background color contrast against WCAG 2.2 and get an accessible text color suggestion.",
+            "Check a five-color palette against WCAG 2.2, fix failing pairs and export a Tailwind theme.",
         },
       ],
     },

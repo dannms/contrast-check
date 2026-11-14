@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { DEFAULT_BG, DEFAULT_FG, hexFromParam } from "@contrast-check/core";
+import { parsePaletteQuery } from "@contrast-check/core";
 
-// Read ?fg= and ?bg= on the server so the first paint already has the shared colors.
+// Read the palette on the server so the first paint already has the shared colors.
 const { searchParams } = useRequestURL();
-const initialFg =
-  hexFromParam(searchParams.get("fg") ?? undefined) ?? DEFAULT_FG;
-const initialBg =
-  hexFromParam(searchParams.get("bg") ?? undefined) ?? DEFAULT_BG;
+const { palette, options } = parsePaletteQuery(
+  Object.fromEntries(searchParams.entries()),
+);
 </script>
 
 <template>
-  <ContrastChecker :initial-fg="initialFg" :initial-bg="initialBg" />
+  <PaletteApp :palette="palette" :options="options" />
 </template>
