@@ -157,18 +157,18 @@ export function ContrastChecker({
               />
             </fieldset>
             <div
-              className={`flex flex-col gap-2 lg:col-span-2 lg:flex-row lg:flex-wrap lg:items-end ${lastGroup}`}
+              className={`flex flex-col gap-2 lg:col-span-2 lg:grid lg:auto-cols-max ${lastGroup}`}
             >
               <p
                 aria-hidden="true"
-                className="text-xs/4 text-ink-muted lg:basis-full"
+                className="text-xs/4 text-ink-muted lg:col-start-1 lg:row-start-1"
               >
                 Actions
               </p>
               <button
                 type="button"
                 onClick={swap}
-                className="cc-outline h-12 w-full cursor-pointer rounded-xs border border-line bg-transparent px-4 text-sm/6 text-ink transition-transform duration-150 ease-press active:scale-97 motion-reduce:transition-none motion-reduce:active:scale-100 md:w-auto md:self-start lg:h-10 lg:self-auto"
+                className="cc-outline h-12 w-full cursor-pointer rounded-xs border border-line bg-transparent px-4 text-sm/6 text-ink transition-transform duration-150 ease-press active:scale-97 motion-reduce:transition-none motion-reduce:active:scale-100 md:w-auto md:self-start lg:relative lg:z-10 lg:col-start-1 lg:row-start-2 lg:h-10 lg:w-full lg:self-start"
               >
                 Swap colors
               </button>
