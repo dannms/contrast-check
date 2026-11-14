@@ -21,32 +21,32 @@ type Shot = {
   height: number;
 };
 
-// Full-page captures; the page takes the chosen background, so each pair is its own theme.
+// Full-page captures; the page takes the chosen background, so each palette is its own theme.
 const shots: Shot[] = [
-  // Failing AA normal and AAA normal, passing the large-text and UI criteria.
+  // The default palette: every pair passes AA.
   {
-    file: "screenshot-red.png",
-    query: "?fg=FF3211&bg=FFFFFF",
+    file: "screenshot-default.png",
+    query: "",
+    width: 1280,
+    height: 900,
+  },
+  // A light primary and an orange accent: three pairs fail and each has a Fix button.
+  {
+    file: "screenshot-failing.png",
+    query: "?primary=93c5fd&accent=f97316",
     width: 1280,
     height: 900,
   },
   // A dark surface: the interface follows the chosen colors, not the OS theme.
   {
     file: "screenshot-dark.png",
-    query: "?fg=5B7BB5&bg=12151C",
-    width: 1280,
-    height: 900,
-  },
-  // Failing pair: the specimen almost disappears, the interface stays legible.
-  {
-    file: "screenshot-failing.png",
-    query: "?fg=EEEEEE&bg=FFFFFF",
+    query: "?text=f5f5f4&background=12151c",
     width: 1280,
     height: 900,
   },
   {
     file: "screenshot-mobile.png",
-    query: "?fg=FF3211&bg=FFFFFF",
+    query: "?primary=93c5fd&accent=f97316",
     width: 390,
     height: 844,
   },
@@ -88,7 +88,7 @@ try {
     const context = await browser.newContext({ viewport: { width, height } });
     const page = await context.newPage();
     await page.goto(`${baseUrl}/${query}`);
-    await page.getByTestId("specimen").waitFor();
+    await page.getByTestId("preview").waitFor();
     // Let the DM Mono faces finish loading before the capture.
     await page.evaluate(() => document.fonts.ready);
     const path = join(outDir, file);
