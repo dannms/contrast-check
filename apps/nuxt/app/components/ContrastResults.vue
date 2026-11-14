@@ -7,7 +7,9 @@ const props = defineProps<{
 }>();
 
 const ratioValue = computed(() =>
-  props.evaluation ? (formatRatio(props.evaluation.ratio).split(":")[0] ?? "") : "",
+  props.evaluation
+    ? (formatRatio(props.evaluation.ratio).split(":")[0] ?? "")
+    : "",
 );
 
 const summary = computed(() =>
@@ -20,28 +22,28 @@ const summary = computed(() =>
 <template>
   <section
     aria-labelledby="results-heading"
-    class="mt-results-top flex flex-col gap-12 border-t border-hairline pt-rule md:flex-row md:flex-wrap md:gap-x-16"
+    class="mt-10 grid gap-y-8 border-t border-hairline pt-8 md:mt-12 md:grid-cols-2 md:gap-x-16"
   >
     <h2 id="results-heading" class="sr-only">Results</h2>
-    <div class="flex flex-col gap-4 md:shrink md:grow md:basis-ratio">
+    <div>
       <template v-if="evaluation">
-        <p class="text-label text-ink-muted">Contrast ratio</p>
-        <p data-testid="ratio" class="whitespace-nowrap text-ratio">{{ ratioValue }}<span class="text-ratio-unit tracking-normal text-ink-muted">:1</span></p>
+        <p class="text-xs/4 text-ink-muted">Contrast ratio</p>
+        <p data-testid="ratio" class="mt-2 text-7xl leading-none font-light tracking-tighter whitespace-nowrap md:text-8xl lg:tall:text-9xl">{{ ratioValue }}<span class="text-3xl tracking-normal text-ink-muted md:text-4xl lg:tall:text-5xl">:1</span></p>
       </template>
       <p
         data-testid="live-summary"
         aria-live="polite"
         aria-atomic="true"
-        class="max-w-summary text-ui text-ink-muted"
+        class="mt-4 max-w-md text-sm/6 text-ink-muted"
       >
         {{ summary }}
       </p>
     </div>
-    <div v-if="evaluation" class="md:shrink md:grow md:basis-criteria">
-      <table class="w-full border-collapse text-left text-ui">
+    <div v-if="evaluation">
+      <table class="w-full border-collapse text-left text-sm/6">
         <caption class="sr-only">WCAG 2.2 contrast criteria</caption>
         <thead>
-          <tr class="text-label text-ink-muted">
+          <tr class="text-xs/4 text-ink-muted">
             <th scope="col" class="pr-4 pb-2 font-normal">Criterion</th>
             <th scope="col" class="pr-4 pb-2 font-normal">Minimum</th>
             <th scope="col" class="pb-2 font-normal">Result</th>
@@ -54,9 +56,9 @@ const summary = computed(() =>
             :data-testid="c.id"
             class="border-t border-hairline"
           >
-            <th scope="row" class="py-row pr-4 font-normal">{{ c.label }}</th>
-            <td class="py-row pr-4">{{ c.threshold }}:1</td>
-            <td class="py-row">
+            <th scope="row" class="py-2 pr-4 font-normal">{{ c.label }}</th>
+            <td class="py-2 pr-4">{{ c.threshold }}:1</td>
+            <td class="py-2">
               <StatusBadge :pass="c.pass" />
             </td>
           </tr>

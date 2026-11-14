@@ -26,11 +26,11 @@ const FLASH_MS = 200;
 const BLACK: Rgb = { r: 0, g: 0, b: 0 };
 
 // Groups of the top row: stacked with hairlines on mobile, columns from 768px.
-const firstGroup = "pb-group md:pb-0";
+const firstGroup = "pb-6 md:pb-0";
 const nextGroup =
-  "border-t border-hairline pt-group pb-group md:border-t-0 md:border-l md:py-0 md:pl-column";
+  "border-t border-hairline py-6 md:border-t-0 md:border-l md:py-0 md:pl-8";
 const lastGroup =
-  "border-t border-hairline pt-group md:border-t-0 md:border-l md:pt-0 md:pl-column";
+  "border-t border-hairline pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-8";
 
 const fgText = ref(props.initialFg);
 const bgText = ref(props.initialBg);
@@ -158,17 +158,17 @@ function suggest() {
     class="min-h-dvh bg-surface text-ink"
   >
     <div
-      class="mx-auto flex w-full max-w-page flex-col px-gutter pt-page-top pb-page-bottom"
+      class="mx-auto flex w-full max-w-6xl flex-col px-4 pt-6 pb-12 md:px-8 md:pt-8 lg:px-12"
     >
       <main>
         <header class="flex items-baseline justify-between">
-          <h1 class="text-title">Contrast Check</h1>
-          <p class="text-label text-ink-muted">WCAG 2.2</p>
+          <h1 class="text-sm/6 font-medium">Contrast Check</h1>
+          <p class="text-xs/4 text-ink-muted">WCAG 2.2</p>
         </header>
 
-        <div class="mt-row-top md:grid md:grid-cols-3 md:items-start">
+        <div class="mt-8 md:mt-10 md:grid md:grid-cols-3 md:items-start lg:grid-cols-5">
           <fieldset
-            class="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2"
+            class="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2 lg:col-span-3"
           >
             <legend class="sr-only">Colors</legend>
             <ColorField
@@ -187,11 +187,16 @@ function suggest() {
               @update:model-value="changeBg"
             />
           </fieldset>
-          <div class="flex flex-col gap-2" :class="lastGroup">
-            <p aria-hidden="true" class="text-label text-ink-muted">Actions</p>
+          <div
+            class="flex flex-col gap-2 lg:col-span-2 lg:flex-row lg:flex-wrap lg:items-end"
+            :class="lastGroup"
+          >
+            <p aria-hidden="true" class="text-xs/4 text-ink-muted lg:basis-full">
+              Actions
+            </p>
             <button
               type="button"
-              class="cc-outline cc-press h-control w-full cursor-pointer rounded-control border border-line bg-transparent px-4 text-ui text-ink md:w-auto md:self-start"
+              class="cc-outline h-12 w-full cursor-pointer rounded-xs border border-line bg-transparent px-4 text-sm/6 text-ink transition-transform duration-150 ease-press active:scale-97 motion-reduce:transition-none motion-reduce:active:scale-100 md:w-auto md:self-start lg:h-10 lg:self-auto"
               @click="swap"
             >
               Swap colors
@@ -210,28 +215,26 @@ function suggest() {
         <ColorPreview v-if="fg && bg" :fg="toHex(fg)" />
       </main>
 
-      <footer
-        class="mt-footer-top flex flex-wrap gap-x-2 text-label text-ink-muted"
-      >
+      <footer class="mt-16 flex flex-wrap gap-x-2 text-xs/4 text-ink-muted">
         <span>Contrast Check</span>
         <span aria-hidden="true">·</span>
         <a
           href="https://contrast-check-next.vercel.app"
-          class="underline underline-offset-3"
+          class="underline underline-offset-4"
         >
           Next.js
         </a>
         <span aria-hidden="true">·</span>
         <a
           href="https://contrast-check-nuxt.vercel.app"
-          class="underline underline-offset-3"
+          class="underline underline-offset-4"
         >
           Nuxt
         </a>
         <span aria-hidden="true">·</span>
         <a
           href="https://github.com/dannms/contrast-check"
-          class="underline underline-offset-3"
+          class="underline underline-offset-4"
         >
           GitHub
         </a>

@@ -9,7 +9,7 @@ defineProps<{ pass: boolean }>();
       aria-hidden="true"
       focusable="false"
       viewBox="0 0 20 20"
-      class="size-icon"
+      class="size-4"
       fill="none"
       stroke="currentColor"
       stroke-width="2.5"

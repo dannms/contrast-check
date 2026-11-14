@@ -25,9 +25,11 @@ function onPick(event: Event) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
-    <label :for="id" class="text-label text-ink-muted">{{ label }}</label>
-    <div class="flex items-center justify-between gap-4 md:justify-start">
+  <div>
+    <label :for="id" class="block text-xs/4 text-ink-muted">{{ label }}</label>
+    <div
+      class="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 md:justify-start"
+    >
       <input
         :id="id"
         v-model="model"
@@ -36,20 +38,21 @@ function onPick(event: Event) {
         :aria-describedby="invalid ? `${hintId} ${errorId}` : hintId"
         autocomplete="off"
         spellcheck="false"
+        size="7"
         maxlength="7"
-        class="w-hex min-w-0 rounded-none border-0 border-b border-line bg-transparent p-0 pb-1.5 text-input text-ink aria-[invalid=true]:border-ink"
-        :class="{ 'cc-flash': flashing }"
+        class="field-sizing-content min-w-40 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink md:min-w-52 md:text-5xl"
+        :class="{ 'animate-flash motion-reduce:animate-none': flashing }"
       />
       <input
         type="color"
         :aria-label="`${label} color picker`"
         :value="pickerValue"
-        class="cc-swatch shrink-0"
+        class="cc-swatch size-12 shrink-0 cursor-pointer appearance-none overflow-hidden rounded-full border border-line bg-transparent p-0"
         @input="onPick"
       />
     </div>
     <p :id="hintId" class="sr-only">Hex, like #1A2B3C or #ABC</p>
-    <p v-if="invalid" :id="errorId" class="text-label font-medium text-ink">
+    <p v-if="invalid" :id="errorId" class="mt-2 text-xs/4 font-medium text-ink">
       Enter a valid hex color, such as #1A2B3C or #ABC.
     </p>
   </div>
