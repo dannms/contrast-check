@@ -35,10 +35,12 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 1: OKLCH conversion and gamut mapping
 
 **Files:**
+
 - Create: `packages/core/src/oklch.ts`
 - Test: `packages/core/src/oklch.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `type Oklch = { l: number; c: number; h: number }` (l in 0..1, c ≥ 0, h in degrees 0..360; h is 0 when c is 0)
   - `rgbToOklch(rgb: Rgb): Oklch`
@@ -65,6 +67,7 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 2: One lightness search, used by the suggestion and the theme
 
 **Files:**
+
 - Create: `packages/core/src/lightness.ts`
 - Modify: `packages/core/src/color.ts` (replace the HSL search in `suggestTextColor`; remove `rgbToHsl`, `hslToRgb` and the `Hsl` type if nothing else uses them)
 - Modify: `packages/core/src/color.test.ts`, `packages/core/src/theme.test.ts` (hue checks move to OKLCH hue)
@@ -72,6 +75,7 @@ Each line has a test in the task that owns the code (marked "Review focus").
 - Test: `packages/core/src/lightness.test.ts`
 
 **Interfaces:**
+
 - Consumes: `rgbToOklch`, `oklchToRgb` (Task 1); `contrastRatio`, `toHex` (existing)
 - Produces: `closestPassingLightness(base: Rgb, against: Rgb, threshold: number, accept?: (candidate: Rgb) => boolean): Rgb | null` — keeps the OKLCH hue and chroma of `base` (gamut-mapped), varies only L, returns the passing candidate (contrast with `against` ≥ `threshold` and `accept(candidate)` true) whose L is closest to `base`'s L; returns `base` itself when it already satisfies both; `null` when none does.
 - `suggestTextColor(fg, bg, target)` keeps its signature and return type (`Suggestion | null`).
@@ -93,10 +97,12 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 3: Scales from a seed
 
 **Files:**
+
 - Create: `packages/core/src/scale.ts`
 - Test: `packages/core/src/scale.test.ts`
 
 **Interfaces:**
+
 - Consumes: `rgbToOklch`, `oklchToRgb`, `formatOklch` (Task 1); `contrastRatio`, `toHex`, `parseHex`
 - Produces:
   - `const SCALE_STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const`; `type StepName = (typeof SCALE_STEPS)[number]`
@@ -121,10 +127,12 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 4: Palette, pairs and verdict
 
 **Files:**
+
 - Create: `packages/core/src/palette.ts`
 - Test: `packages/core/src/palette.test.ts`
 
 **Interfaces:**
+
 - Consumes: `contrastRatio`, `parseHex` (existing)
 - Produces:
   - `const ROLES = ["text", "background", "primary", "secondary", "accent"] as const`; `type Role = (typeof ROLES)[number]`
@@ -151,10 +159,12 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 5: Fix without breaking passing pairs
 
 **Files:**
+
 - Modify: `packages/core/src/palette.ts`
 - Test: `packages/core/src/palette.test.ts`
 
 **Interfaces:**
+
 - Consumes: `closestPassingLightness` (Task 2); `checkPalette` (Task 4)
 - Produces: `type FixResult = { palette: Palette } | { palette: null; blockedBy: PairId[] }`; `fixPair(palette: Palette, pairId: PairId, options: PaletteOptions): FixResult` — changes only `palette[fixRole].active`; never `seed`
 
@@ -172,10 +182,12 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 6: Tailwind v4 export
 
 **Files:**
+
 - Create: `packages/core/src/export.ts`
 - Test: `packages/core/src/export.test.ts`
 
 **Interfaces:**
+
 - Consumes: `scaleFor`, `annotateScale` (Task 3); `checkPalette`, `paletteVerdict` (Task 4); `rgbToOklch`, `formatOklch` (Task 1)
 - Produces: `toTailwindTheme(palette: Palette, options: PaletteOptions): string`
 
@@ -194,11 +206,13 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 7: Palette URL state and defaults
 
 **Files:**
+
 - Modify: `packages/core/src/url-state.ts` (keep `DEFAULT_FG`, `DEFAULT_BG`, `hexFromParam`, `buildQuery` untouched for the current apps)
 - Modify: `packages/core/src/index.ts` (export every new module: `oklch`, `lightness`, `scale`, `palette`, `export`)
 - Test: `packages/core/src/url-state.test.ts` (create)
 
 **Interfaces:**
+
 - Consumes: `Palette`, `PaletteOptions`, `ROLES`, `checkPalette` (Task 4)
 - Produces:
   - `DEFAULT_PALETTE: Palette` with seed = active: text `#1C1D22`, background `#FAFAF7`, primary `#2F5BD8`, secondary `#E9ECF5`, accent `#C2410C`
@@ -220,6 +234,7 @@ Each line has a test in the task that owns the code (marked "Review focus").
 ### Task 8: Ship Phase 1
 
 **Files:**
+
 - Commit: `docs/design/2026-11-14-palette-and-motion.md` and this plan, if not committed yet (first commit of the phase is preferred: `docs: add the palette and motion design and phase 1 plan`)
 
 - [ ] **Step 1:** Confirm `git status` is clean except intended files; confirm no new runtime dependency in `packages/core/package.json`.
