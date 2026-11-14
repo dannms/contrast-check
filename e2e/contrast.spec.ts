@@ -108,3 +108,10 @@ test("shows an approved pair exactly as chosen", async ({ page }) => {
     "rgb(255, 255, 255)",
   );
 });
+
+test("shows a one-sentence verdict under the ratio", async ({ page }) => {
+  await page.goto("/?fg=777777&bg=FFFFFF");
+  await expect(
+    page.getByText("Large text and UI only. Normal text needs 4.5:1."),
+  ).toBeVisible();
+});
