@@ -5,6 +5,7 @@ import {
   fixPair,
   labelColorFor,
   type Palette,
+  type PaletteOptions,
   paletteVerdict,
   ROLES,
   type Role,
@@ -146,7 +147,7 @@ describe("paletteVerdict", () => {
 });
 
 describe("fixPair", () => {
-  const passingIds = (palette: Palette, options = AA) =>
+  const passingIds = (palette: Palette, options: PaletteOptions = AA) =>
     checkPalette(palette, options)
       .filter((r) => r.pass)
       .map((r) => r.id);
