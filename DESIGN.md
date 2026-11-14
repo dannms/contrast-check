@@ -67,7 +67,13 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints.
 - **Actions group**: contains, in this order in the DOM and on screen: the Swap colors button, the Target level select and the Suggest accessible text color button, with a `text-xs/4` muted note right below the Suggest button ("Changes only the lightness of your text color."), followed by the (live) message (`text-xs/4`, muted). Visual order and focus order are the same (WCAG 2.4.3).
   - Visible group label "Actions" (`text-xs/4`, muted), decorative (`aria-hidden`), aligned with the "Text" and "Background" labels. The suggestion section keeps its h2 "Suggestion", visually hidden.
   - Mobile: the three controls stacked at full width, `gap-2`.
-  - From `lg`: Swap and the select side by side on the first row, Suggest on the second. The Suggestion section and its controls row become `contents`, so the select and Suggest join the Actions row while the DOM order and the region semantics stay.
+  - From `lg` the group is a grid of two content-sized columns (`lg:grid lg:auto-cols-max`, `gap-2`) so Swap and the select get exactly the width they need:
+    - Row 1, labels: "Actions" (decorative, `aria-hidden`) over column 1 and "Target level" over column 2.
+    - Row 2, controls: Swap in column 1 and the select in column 2, aligned to the top, both `lg:h-10`.
+    - Row 3: Suggest across both columns. Row 4: the note. Row 5: the live message.
+    - The Suggestion section spans both columns and the five rows and inherits the tracks with `grid-cols-subgrid` and `grid-rows-subgrid`. Its controls row and the select wrapper subgrid in turn, so the label and the select land in the grid cells above. There is no `display: contents` anywhere, so the landmark region and the focus order do not depend on browser quirks.
+    - The section box covers the Swap cell, so Swap has `lg:relative lg:z-10` to stay clickable.
+    - DOM order and focus order stay Swap, select, Suggest.
   - The Swap button sits outside the "Colors" fieldset, right after it in the DOM. The fieldset contains only the Text and Background groups.
 - **Buttons and select**: `h-12 lg:h-10 px-4 text-sm/6 rounded-xs`. The select and the Swap colors button are transparent with a 1px `--cc-line` border and ink text (outline). Suggest accessible text color is the primary action: filled with `--cc-ink`, text in `--cc-surface`, no border (the contrast is the ink/surface pair itself, always at least 4.5:1). Hover (only in `(hover: hover) and (pointer: fine)`): the border of the select and of Swap becomes `--cc-ink`; Suggest does not change color (cursor only). Focus and `:active` are unchanged.
 - **Results**: `mt-10 md:mt-12 pt-8`, 1px hairline top border.
