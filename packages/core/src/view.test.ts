@@ -3,6 +3,7 @@ import { contrastRatio, parseHex } from "./color";
 import { toTailwindTheme } from "./export";
 import {
   checkPalette,
+  fixPair,
   labelColorFor,
   type Palette,
   type PaletteOptions,
@@ -283,6 +284,40 @@ describe("reduce", () => {
     expect(view.message.endsWith(".")).toBe(true);
   });
 
+  it("a fix blocked by several pairs names the first and counts the rest", () => {
+    const blocked = makePalette({
+      text: "#CCCCCC",
+      background: "#808080",
+      primary: "#303030",
+      secondary: "#383838",
+      accent: "#101010",
+    });
+    // Preconditions: the text pair fails, and the text color is the label on both fills.
+    const pairs = checkPalette(blocked, DEFAULT_PALETTE_OPTIONS);
+    const pass = (id: string) => pairs.find((p) => p.id === id)?.pass;
+    expect(pass("text-on-background")).toBe(false);
+    expect(pass("label-on-primary")).toBe(true);
+    expect(pass("label-on-secondary")).toBe(true);
+    const result = fixPair(
+      blocked,
+      "text-on-background",
+      DEFAULT_PALETTE_OPTIONS,
+    );
+    expect(result.palette).toBeNull();
+    expect(result).toMatchObject({
+      blockedBy: ["label-on-primary", "label-on-secondary"],
+    });
+
+    const state = run(start(blocked), {
+      type: "fix",
+      pair: "text-on-background",
+    });
+    expect(state.palette).toEqual(blocked);
+    expect(state.message).toBe(
+      "Can't fix without breaking Label on primary and 1 more.",
+    );
+  });
+
   it("copied sets the two messages and any other action clears them", () => {
     const ok = run(start(), { type: "copied", ok: true });
     expect(ok.message).toBe("Theme copied.");
@@ -416,11 +451,25 @@ describe("scales", () => {
     expect(primaryStep?.ratio).toBe(`${expectedPrimary.toFixed(2)}:1`);
   });
 
-  it("name each step with its hex, ratio and use", () => {
-    const step = paletteView(start()).scales[2]?.steps[6];
-    expect(step?.ariaLabel).toBe(
-      `${step?.name}, ${step?.hex}, ${step?.ratio}, ${step?.useLabel}`,
+  it("name each step with its hex, ratio and use spelled out", () => {
+    const steps = paletteView(start()).scales.flatMap((s) => s.steps);
+    const spoken = {
+      AAA: "AAA text",
+      AA: "AA text",
+      "Large · UI": "large text and UI",
+      Decor: "decorative",
+    } as const;
+    for (const step of steps) {
+      expect(step.ariaLabel).toBe(
+        `${step.name}, ${step.hex}, ${step.ratio}, ${spoken[step.useLabel]}`,
+      );
+    }
+    expect(new Set(steps.map((s) => s.useLabel))).toEqual(
+      new Set(["AAA", "AA", "Large · UI", "Decor"]),
     );
-    expect(["AAA", "AA", "Large · UI", "Decor"]).toContain(step?.useLabel);
+    const primary600 = paletteView(start()).scales[2]?.steps.find(
+      (s) => s.name === 600,
+    );
+    expect(primary600?.ariaLabel).toBe("600, #2F5BD8, 5.56:1, AA text");
   });
 });

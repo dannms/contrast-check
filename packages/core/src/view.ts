@@ -241,6 +241,13 @@ const USE_LABEL: Record<Use, UseLabel> = {
   decorative: "Decor",
 };
 
+const USE_SPOKEN: Record<Use, string> = {
+  "text-aaa": "AAA text",
+  "text-aa": "AA text",
+  "large-ui": "large text and UI",
+  decorative: "decorative",
+};
+
 const HIGHLIGHT: Record<PairId, PaletteView["preview"]["highlight"]> = {
   "text-on-background": "copy",
   "label-on-secondary": "panel",
@@ -312,7 +319,7 @@ export function paletteView(state: ViewState): PaletteView {
           useLabel,
           checked,
           tabbable: hasChecked ? checked : s.name === 50,
-          ariaLabel: `${s.name}, ${s.hex}, ${ratio}, ${useLabel}`,
+          ariaLabel: `${s.name}, ${s.hex}, ${ratio}, ${USE_SPOKEN[s.use]}`,
         };
       }),
     };
