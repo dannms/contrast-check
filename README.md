@@ -30,11 +30,13 @@ Everything else, the labels, borders, focus ring and buttons, uses a theme deriv
 | `hairline`  | Ink mixed 84% toward the surface. Decorative dividers only                             | None; never a control boundary                                     |
 | `tint`      | Ink mixed 90% toward the surface. Brief highlight of the Text input after a suggestion | None in the design; `deriveTheme` still keeps ink on tint at 4.5:1 |
 
+The interface uses only the default Tailwind scales on an 8px grid, with no arbitrary values.
+
 ## Why two frameworks
 
 The application is small on purpose, so the interesting question is what stays the same when the framework changes. Here the answer is almost everything that matters: the color math, the design tokens, the rendered HTML and the accessibility behavior.
 
-Color parsing, relative luminance, contrast ratio, criteria evaluation, the text color suggestion, the derived theme, the screen reader summary and the URL state helpers live in `packages/core` as pure TypeScript with no framework or DOM dependency. The design tokens (the theme roles as custom properties, the type scale, spacing, the Tailwind theme mapping, focus and reduced-motion styles) live there too, as a single CSS file that both apps import.
+Color parsing, relative luminance, contrast ratio, criteria evaluation, the text color suggestion, the derived theme, the screen reader summary and the URL state helpers live in `packages/core` as pure TypeScript with no framework or DOM dependency. The design tokens (the theme roles as custom properties, the font, the easing, the `tall` variant, the Tailwind theme mapping, focus and reduced-motion styles) live there too, as a single CSS file that both apps import. Sizes, spacing and type are not tokens: both apps use Tailwind's default scales directly in their classes.
 
 Each app is a thin layer of components over that core. A single Playwright suite in `e2e/` runs against both production builds as separate projects (`next` on port 3100, `nuxt` on port 3200), so any divergence in behavior or accessibility shows up as a failing test rather than a code review comment.
 
@@ -43,20 +45,20 @@ Each app is a thin layer of components over that core. A single Playwright suite
 - Text and background color inputs that accept `#RGB` and `#RRGGBB` (the `#` is optional), each synced with a circular native color picker
 - Inline validation with an accessible error message
 - Swap button that exchanges the two colors
-- Specimen in three sizes (a fluid 36 to 56px line, 24px and 16px), directly on the page
+- Specimen in three sizes (36px, then 48px from `md`; 24px; 16px), directly on the page
 - Contrast ratio with two decimals, for example `4.54:1`, as the largest element on the page
 - Pass/fail results for AA normal text (4.5), AA large text (3), AAA normal text (7), AAA large text (4.5) and UI components and graphics (3)
 - Suggestion of an accessible text color for AA or AAA, or a message when no color can reach the target
 - A page and interface themed from the chosen pair, as described above
 - Shareable state in the URL (`?fg=777777&bg=ffffff`), read on the server so the first render already shows it
-- Mobile-first layout with a single breakpoint at 768px
+- Mobile-first layout with `md` (768px) and `lg` (1024px) breakpoints, plus a `tall` variant for screens at least 800px high that gives the ratio its largest size
 
 ## Accessibility
 
 - A one-sentence summary in an `aria-live="polite"` region, instead of announcing the whole results table on every keystroke: screen reader users hear one sentence per change.
 - Pass and fail are shown with an icon and the words "Pass" and "Fail", never color alone, so the status survives color blindness and forced colors.
 - Validation errors are tied to their field with `aria-describedby` and `aria-invalid`, so the error is read when the field is focused.
-- Every control has a visible focus ring (2px in the ink color, 3px offset), and control borders keep at least 3:1 contrast against the page.
+- Every control has a visible focus ring (2px in the ink color, 2px offset), and control borders keep at least 3:1 contrast against the page.
 - The interface passes WCAG AA contrast for any pair of colors, because its text and borders come from the derived theme: a contrast checker that fails its own criteria is not credible. axe-core finds no violations even with a failing pair, where only the specimen is excluded from the scan, since it is the thing being tested.
 - Pairs that pass AA are shown with their exact colors, which an end-to-end test checks.
 - `prefers-reduced-motion` disables transitions and transforms. The theme comes from the colors you choose, not from `prefers-color-scheme`.
@@ -81,7 +83,7 @@ packages/core/          Pure logic and shared design tokens
                           suggestTextColor, summarize
   src/theme.ts            deriveTheme, themeToCssVars, mix, fadeToward
   src/url-state.ts        Query string parsing and building
-  src/styles/tokens.css   Design tokens, Tailwind theme, focus and motion styles
+  src/styles/tokens.css   Theme colors, font, easing, tall variant, focus and motion styles
 apps/next/              Next.js app (App Router, React)
 apps/nuxt/              Nuxt app (Vue, Composition API)
 e2e/                    Playwright and axe-core suite, run against both apps
@@ -93,7 +95,7 @@ scripts/                Screenshot generation for this README
 - Bun 1.x workspaces
 - Next.js 16.4 with React 19.3 (`apps/next`)
 - Nuxt 4.6 with Vue 3.5 (`apps/nuxt`)
-- Tailwind CSS 4.3 with design tokens as CSS custom properties
+- Tailwind CSS 4.3, default scales only, with the derived theme as CSS custom properties
 - DM Mono, self-hosted through Fontsource (`@fontsource/dm-mono` 5.3), with no request to a font CDN
 - TypeScript 7.0 in `packages/core` and `apps/next`; `apps/nuxt` uses TypeScript 6.0 because vue-tsc does not yet support TypeScript 7
 - Biome 2.6 for linting and formatting, including Vue files
