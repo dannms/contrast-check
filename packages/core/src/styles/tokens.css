@@ -26,6 +26,15 @@
 /* Tall screens (min-height 50rem): room for the largest ratio. */
 @custom-variant tall (@media (min-height: 50rem));
 
+/*
+ * Actions grid from lg: a content-sized column for Swap and a flexible one for
+ * the select. Tailwind has no standard class for "auto minmax(0, 1fr)", and a
+ * bracketed value is not allowed, so it is a named utility.
+ */
+@utility grid-cols-actions {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
 @theme inline {
   --color-surface: var(--cc-surface);
   --color-ink: var(--cc-ink);
