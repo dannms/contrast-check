@@ -136,7 +136,7 @@ export function ContrastChecker({
             <p className="text-label text-ink-muted">WCAG 2.2</p>
           </header>
 
-          <div className="mt-row-top md:grid md:grid-cols-3">
+          <div className="mt-row-top md:grid md:grid-cols-3 md:items-start">
             <fieldset className="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2">
               <legend className="sr-only">Colors</legend>
               <ColorField

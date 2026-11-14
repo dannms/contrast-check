@@ -53,6 +53,7 @@ Mobile-first, one breakpoint at 768px.
 - **Top row**: `margin-top: clamp(40px, 6vw, 64px)`, three groups: Text, Background, Actions.
   - Mobile: groups stacked, each separated by a 1px hairline top border and 28px vertical padding. The first group has no border and no top padding.
   - From 768px: three equal columns, a 1px hairline left divider and 40px horizontal padding. The first column has no divider and no left padding.
+  - Columns align to the top; each divider is as tall as its own column.
 - **Color group**: label (12px, muted), then a row with the hex input and a 44x44 circular color swatch (native color input, 1px line border).
   - Mobile: input on the left, swatch on the right (space-between). From 768px: swatch right after the input, 16px gap.
   - Input: transparent background, no border except a 1px bottom border in `--cc-line`, 6px bottom padding, width fits 7 characters.
