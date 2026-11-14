@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { type Evaluation, formatRatio, summarize } from "@contrast-check/core";
+import {
+  type Evaluation,
+  formatRatio,
+  summarize,
+  verdict,
+} from "@contrast-check/core";
 
-/** The ratio as the focal point, a one-sentence live summary and the criteria table. */
+/** The ratio as the focal point, a one-sentence verdict, a hidden live summary and the criteria table. */
 const props = defineProps<{
   evaluation: Evaluation | null;
 }>();
@@ -12,10 +17,14 @@ const ratioValue = computed(() =>
     : "",
 );
 
+const emptyMessage = "Enter two valid hex colors to see the contrast ratio.";
+
+const visibleVerdict = computed(() =>
+  props.evaluation ? verdict(props.evaluation) : emptyMessage,
+);
+
 const summary = computed(() =>
-  props.evaluation
-    ? summarize(props.evaluation)
-    : "Enter two valid hex colors to see the contrast ratio.",
+  props.evaluation ? summarize(props.evaluation) : emptyMessage,
 );
 </script>
 
@@ -30,11 +39,12 @@ const summary = computed(() =>
         <p class="text-xs/4 text-ink-muted">Contrast ratio</p>
         <p data-testid="ratio" class="mt-2 text-7xl leading-none font-light tracking-tighter whitespace-nowrap md:text-8xl lg:tall:text-9xl">{{ ratioValue }}<span class="text-3xl tracking-normal text-ink-muted md:text-4xl lg:tall:text-5xl">:1</span></p>
       </template>
+      <p class="mt-4 max-w-md text-sm/6 text-ink">{{ visibleVerdict }}</p>
       <p
         data-testid="live-summary"
         aria-live="polite"
         aria-atomic="true"
-        class="mt-4 max-w-md text-sm/6 text-ink-muted"
+        class="sr-only"
       >
         {{ summary }}
       </p>
