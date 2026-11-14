@@ -36,7 +36,7 @@ The interface uses only the default Tailwind scales on an 8px grid, with no arbi
 
 The application is small on purpose, so the interesting question is what stays the same when the framework changes. Here the answer is almost everything that matters: the color math, the design tokens, the rendered HTML and the accessibility behavior.
 
-Color parsing, relative luminance, contrast ratio, criteria evaluation, the text color suggestion, the derived theme, the screen reader summary and the URL state helpers live in `packages/core` as pure TypeScript with no framework or DOM dependency. The design tokens (the theme roles as custom properties, the font, the easing, the `tall` variant, the Tailwind theme mapping, focus and reduced-motion styles) live there too, as a single CSS file that both apps import. Sizes, spacing and type are not tokens: both apps use Tailwind's default scales directly in their classes.
+Color parsing, relative luminance, contrast ratio, criteria evaluation, the text color suggestion, the derived theme, the visible verdict, the screen reader summary and the URL state helpers live in `packages/core` as pure TypeScript with no framework or DOM dependency. The design tokens (the theme roles as custom properties, the font, the easing, the `tall` variant, the Tailwind theme mapping, focus and reduced-motion styles) live there too, as a single CSS file that both apps import. Sizes, spacing and type are not tokens: both apps use Tailwind's default scales directly in their classes.
 
 Each app is a thin layer of components over that core. A single Playwright suite in `e2e/` runs against both production builds as separate projects (`next` on port 3100, `nuxt` on port 3200), so any divergence in behavior or accessibility shows up as a failing test rather than a code review comment.
 
@@ -47,6 +47,7 @@ Each app is a thin layer of components over that core. A single Playwright suite
 - Swap button that exchanges the two colors
 - Specimen in three sizes (36px, then 48px from `md`; 24px; 16px), directly on the page
 - Contrast ratio with two decimals, for example `4.54:1`, as the largest element on the page
+- A one-sentence verdict under the ratio, and a message with an icon after each suggestion (applied, already meets the target, or impossible)
 - Pass/fail results for AA normal text (4.5), AA large text (3), AAA normal text (7), AAA large text (4.5) and UI components and graphics (3)
 - Suggestion of an accessible text color for AA or AAA, or a message when no color can reach the target
 - A page and interface themed from the chosen pair, as described above
@@ -55,7 +56,8 @@ Each app is a thin layer of components over that core. A single Playwright suite
 
 ## Accessibility
 
-- A one-sentence summary in an `aria-live="polite"` region, instead of announcing the whole results table on every keystroke: screen reader users hear one sentence per change.
+- The full summary sits in a visually hidden `aria-live="polite"` region, instead of announcing the whole results table on every keystroke: screen reader users hear one sentence per change. Sighted users get a one-sentence verdict under the ratio, for example "Large text and UI only. Normal text needs 4.5:1."
+- The select has its own chevron. In forced-colors (high contrast) mode it goes back to the native control, so the arrow does not disappear.
 - Pass and fail are shown with an icon and the words "Pass" and "Fail", never color alone, so the status survives color blindness and forced colors.
 - Validation errors are tied to their field with `aria-describedby` and `aria-invalid`, so the error is read when the field is focused.
 - Every control has a visible focus ring (2px in the ink color, 2px offset), and control borders keep at least 3:1 contrast against the page.
@@ -80,7 +82,7 @@ PRODUCT.md              Design governance: users, task, principles, anti-referen
 DESIGN.md               Design governance: theme, typography, layout, motion, floors
 packages/core/          Pure logic and shared design tokens
   src/color.ts            parseHex, relativeLuminance, contrastRatio, evaluate,
-                          suggestTextColor, summarize
+                          suggestTextColor, summarize, verdict
   src/theme.ts            deriveTheme, themeToCssVars, mix, fadeToward
   src/url-state.ts        Query string parsing and building
   src/styles/tokens.css   Theme colors, font, easing, tall variant, focus and motion styles
@@ -106,8 +108,8 @@ No component library is used; every component is written by hand.
 
 ## Testing
 
-- **Unit tests** (Vitest, `packages/core`): contrast ratio against the WCAG reference values (`#000000` on `#FFFFFF` is 21.00, `#767676` is 4.54 and passes AA, `#777777` is 4.48 and fails), hex parsing, criteria evaluation, the summary text, the suggestion algorithm (including hue preservation and unreachable targets) and the derived theme across a matrix of eight color pairs.
-- **End-to-end tests** (Playwright, `e2e/`): typing updates the ratio and criteria, swap, the color picker sync, suggestion, URL state in both directions, the live summary, exact colors for an approved pair, and a full keyboard-only flow. The same files run against Next and Nuxt.
+- **Unit tests** (Vitest, `packages/core`): contrast ratio against the WCAG reference values (`#000000` on `#FFFFFF` is 21.00, `#767676` is 4.54 and passes AA, `#777777` is 4.48 and fails), hex parsing, criteria evaluation, the summary and verdict texts, the suggestion algorithm (including hue preservation and unreachable targets) and the derived theme across a matrix of eight color pairs.
+- **End-to-end tests** (Playwright, `e2e/`): typing updates the ratio and criteria, swap, the color picker sync, suggestion, URL state in both directions, the live summary, the verdict, exact colors for an approved pair, and a full keyboard-only flow. The same files run against Next and Nuxt.
 - **Accessibility tests** (axe-core): scans with no violations for both apps under light and dark operating system color schemes, with an invalid input, and with a failing pair where only the specimen is excluded.
 
 ## Running locally
