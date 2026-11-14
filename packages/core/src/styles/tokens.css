@@ -23,7 +23,7 @@
   --cc-tint: #f6f7f7;
 }
 
-/* Screens at least 800px high (50rem): room for the largest ratio. */
+/* Tall screens (min-height 50rem): room for the largest ratio. */
 @custom-variant tall (@media (min-height: 50rem));
 
 @theme inline {
