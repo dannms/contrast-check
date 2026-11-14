@@ -14,8 +14,43 @@ const outDir = join(root, "docs");
 const port = 3101;
 const baseUrl = `http://localhost:${port}`;
 
-// Failing AA normal and AAA normal, passing the large-text and UI criteria.
-const sampleQuery = "?fg=777777&bg=FFFFFF";
+type Shot = {
+  file: string;
+  query: string;
+  width: number;
+  height: number;
+};
+
+// Full-page captures; the page takes the chosen background, so each pair is its own theme.
+const shots: Shot[] = [
+  // Failing AA normal and AAA normal, passing the large-text and UI criteria.
+  {
+    file: "screenshot-red.png",
+    query: "?fg=FF3211&bg=FFFFFF",
+    width: 1280,
+    height: 900,
+  },
+  // A dark surface: the interface follows the chosen colors, not the OS theme.
+  {
+    file: "screenshot-dark.png",
+    query: "?fg=5B7BB5&bg=12151C",
+    width: 1280,
+    height: 900,
+  },
+  // Failing pair: the specimen almost disappears, the interface stays legible.
+  {
+    file: "screenshot-failing.png",
+    query: "?fg=EEEEEE&bg=FFFFFF",
+    width: 1280,
+    height: 900,
+  },
+  {
+    file: "screenshot-mobile.png",
+    query: "?fg=FF3211&bg=FFFFFF",
+    width: 390,
+    height: 844,
+  },
+];
 
 async function waitForServer(url: string, timeoutMs: number) {
   const deadline = Date.now() + timeoutMs;
@@ -49,15 +84,14 @@ try {
   mkdirSync(outDir, { recursive: true });
 
   const browser = await chromium.launch();
-  for (const colorScheme of ["light", "dark"] as const) {
-    const context = await browser.newContext({
-      viewport: { width: 1280, height: 900 },
-      colorScheme,
-    });
+  for (const { file, query, width, height } of shots) {
+    const context = await browser.newContext({ viewport: { width, height } });
     const page = await context.newPage();
-    await page.goto(`${baseUrl}/${sampleQuery}`);
-    await page.getByTestId("ratio").waitFor();
-    const path = join(outDir, `screenshot-${colorScheme}.png`);
+    await page.goto(`${baseUrl}/${query}`);
+    await page.getByTestId("specimen").waitFor();
+    // Let the DM Mono faces finish loading before the capture.
+    await page.evaluate(() => document.fonts.ready);
+    const path = join(outDir, file);
     await page.screenshot({ path, fullPage: true });
     console.log(`Saved ${path}`);
     await context.close();
