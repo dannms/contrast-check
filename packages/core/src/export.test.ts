@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { toTailwindTheme } from "./export";
-import { type Palette, type PaletteOptions, ROLES, type Role } from "./palette";
+import {
+  checkPalette,
+  labelColorFor,
+  type PairId,
+  type Palette,
+  type PaletteOptions,
+  ROLES,
+  type Role,
+} from "./palette";
 import { SCALE_STEPS, scaleFor } from "./scale";
 
 const makePalette = (colors: Record<Role, string>): Palette =>
@@ -65,16 +73,81 @@ describe("toTailwindTheme", () => {
     expect(out).not.toContain("--color-text: var(");
   });
 
-  it("ends each alias with its ratio on the background", () => {
-    const aliases = css
-      .split("\n")
-      .filter((line) =>
-        /^\s*--color-(text|background|primary|secondary|accent): /.test(line),
-      );
-    expect(aliases).toHaveLength(5);
-    for (const line of aliases) {
-      expect(line).toMatch(/\/\* \d+\.\d{2}:1 on background \*\/$/);
-    }
+  const ratioOf = (palette: Palette, id: PairId): string => {
+    const pair = checkPalette(palette, AA).find((p) => p.id === id);
+    return (pair?.ratio ?? Number.NaN).toFixed(2);
+  };
+  const aliasLine = (out: string, role: Role): string =>
+    out.split("\n").find((l) => l.startsWith(`  --color-${role}: `)) ?? "";
+  const LIGHT_PRIMARY = makePalette({
+    text: "#1C1D22",
+    background: "#FAFAF7",
+    primary: "#93C5FD",
+    secondary: "#E9ECF5",
+    accent: "#C2410C",
+  });
+
+  it("annotates each alias with the pair that applies to its role", () => {
+    const r = (id: PairId) => ratioOf(EXAMPLE, id);
+    expect(
+      aliasLine(css, "text").endsWith(
+        `/* ${r("text-on-background")}:1 on background */`,
+      ),
+    ).toBe(true);
+    expect(aliasLine(css, "background").endsWith("/* surface */")).toBe(true);
+    expect(
+      aliasLine(css, "primary").endsWith(
+        `/* label ${r("label-on-primary")}:1, ${r("primary-vs-background")}:1 vs background */`,
+      ),
+    ).toBe(true);
+    expect(
+      aliasLine(css, "secondary").endsWith(
+        `/* label ${r("label-on-secondary")}:1 */`,
+      ),
+    ).toBe(true);
+    expect(
+      aliasLine(css, "accent").endsWith(
+        `/* ${r("accent-vs-background")}:1 on background */`,
+      ),
+    ).toBe(true);
+  });
+
+  it("takes the annotated ratios from checkPalette", () => {
+    const out = toTailwindTheme(LIGHT_PRIMARY, AA);
+    expect(aliasLine(out, "primary")).toContain(
+      `label ${ratioOf(LIGHT_PRIMARY, "label-on-primary")}:1, ${ratioOf(LIGHT_PRIMARY, "primary-vs-background")}:1 vs background`,
+    );
+  });
+
+  it("names the label color of primary and secondary after the five aliases", () => {
+    const lines = css.split("\n");
+    const last = lines.findIndex((l) => l.startsWith("  --color-accent: "));
+    expect(lines[last + 1]).toMatch(
+      /^ {2}--color-primary-label: var\(--color-(text|background)\);$/,
+    );
+    expect(lines[last + 2]).toMatch(
+      /^ {2}--color-secondary-label: var\(--color-(text|background)\);$/,
+    );
+    expect(lines[last + 3]).toBe("}");
+  });
+
+  it("uses background as the primary label on a dark primary and text on a light one", () => {
+    expect(labelColorFor(EXAMPLE.primary.active, EXAMPLE)).toBe(
+      EXAMPLE.background.active.toUpperCase(),
+    );
+    expect(css).toContain("--color-primary-label: var(--color-background);");
+    expect(labelColorFor(LIGHT_PRIMARY.primary.active, LIGHT_PRIMARY)).toBe(
+      LIGHT_PRIMARY.text.active.toUpperCase(),
+    );
+    const out = toTailwindTheme(LIGHT_PRIMARY, AA);
+    expect(out).toContain("--color-primary-label: var(--color-text);");
+  });
+
+  it("names the secondary label by labelColorFor too", () => {
+    const label = labelColorFor(EXAMPLE.secondary.active, EXAMPLE);
+    const role =
+      label === EXAMPLE.text.active.toUpperCase() ? "text" : "background";
+    expect(css).toContain(`--color-secondary-label: var(--color-${role});`);
   });
 
   it("produces no NaN for gray seeds", () => {
@@ -158,10 +231,12 @@ describe("toTailwindTheme", () => {
         --color-accent-900: oklch(0.299 0.0956 38.40);
         --color-accent-950: oklch(0.239 0.0693 39.03);
         --color-text: var(--color-text-950); /* 16.09:1 on background */
-        --color-background: var(--color-background-50); /* 1.00:1 on background */
-        --color-primary: var(--color-primary-600); /* 5.56:1 on background */
-        --color-secondary: var(--color-secondary-100); /* 1.13:1 on background */
+        --color-background: var(--color-background-50); /* surface */
+        --color-primary: var(--color-primary-600); /* label 5.56:1, 5.56:1 vs background */
+        --color-secondary: var(--color-secondary-100); /* label 14.25:1 */
         --color-accent: var(--color-accent-600); /* 4.95:1 on background */
+        --color-primary-label: var(--color-background);
+        --color-secondary-label: var(--color-text);
       }
       "
     `);
