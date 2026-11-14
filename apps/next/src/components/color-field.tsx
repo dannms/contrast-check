@@ -27,11 +27,11 @@ export function ColorField({
   const errorId = `${id}-error`;
 
   return (
-    <div className={`flex flex-col gap-2 ${className}`}>
-      <label htmlFor={id} className="text-label text-ink-muted">
+    <div className={className}>
+      <label htmlFor={id} className="block text-xs/4 text-ink-muted">
         {label}
       </label>
-      <div className="flex items-center justify-between gap-4 md:justify-start">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 md:justify-start">
         <input
           id={id}
           type="text"
@@ -42,22 +42,23 @@ export function ColorField({
           aria-describedby={invalid ? `${hintId} ${errorId}` : hintId}
           autoComplete="off"
           spellCheck={false}
+          size={7}
           maxLength={7}
-          className={`w-hex min-w-0 rounded-none border-0 border-b border-line bg-transparent p-0 pb-1.5 text-input text-ink aria-[invalid=true]:border-ink ${flashing ? "cc-flash" : ""}`}
+          className={`field-sizing-content min-w-40 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink md:min-w-52 md:text-5xl ${flashing ? "animate-flash motion-reduce:animate-none" : ""}`}
         />
         <input
           type="color"
           aria-label={`${label} color picker`}
           value={rgb ? toHex(rgb).toLowerCase() : "#000000"}
           onChange={(e) => onChange(e.target.value.toUpperCase())}
-          className="cc-swatch shrink-0"
+          className="cc-swatch size-12 shrink-0 cursor-pointer appearance-none overflow-hidden rounded-full border border-line bg-transparent p-0"
         />
       </div>
       <p id={hintId} className="sr-only">
         Hex, like #1A2B3C or #ABC
       </p>
       {invalid && (
-        <p id={errorId} className="text-label font-medium text-ink">
+        <p id={errorId} className="mt-2 text-xs/4 font-medium text-ink">
           Enter a valid hex color, such as #1A2B3C or #ABC.
         </p>
       )}

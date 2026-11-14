@@ -6,7 +6,7 @@ export function StatusBadge({ pass }: { pass: boolean }) {
         aria-hidden="true"
         focusable="false"
         viewBox="0 0 20 20"
-        className="size-icon"
+        className="size-4"
         fill="none"
         stroke="currentColor"
         strokeWidth="2.5"

@@ -14,18 +14,21 @@ export function Results({ evaluation }: ResultsProps) {
   return (
     <section
       aria-labelledby="results-heading"
-      className="mt-results-top flex flex-col gap-12 border-t border-hairline pt-rule md:flex-row md:flex-wrap md:gap-x-16"
+      className="mt-10 grid gap-y-8 border-t border-hairline pt-8 md:mt-12 md:grid-cols-2 md:gap-x-16"
     >
       <h2 id="results-heading" className="sr-only">
         Results
       </h2>
-      <div className="flex flex-col gap-4 md:shrink md:grow md:basis-ratio">
+      <div>
         {evaluation && (
           <>
-            <p className="text-label text-ink-muted">Contrast ratio</p>
-            <p data-testid="ratio" className="whitespace-nowrap text-ratio">
+            <p className="text-xs/4 text-ink-muted">Contrast ratio</p>
+            <p
+              data-testid="ratio"
+              className="mt-2 text-7xl leading-none font-light tracking-tighter whitespace-nowrap md:text-8xl lg:tall:text-9xl"
+            >
               {ratioValue}
-              <span className="text-ratio-unit tracking-normal text-ink-muted">
+              <span className="text-3xl tracking-normal text-ink-muted md:text-4xl lg:tall:text-5xl">
                 :1
               </span>
             </p>
@@ -35,7 +38,7 @@ export function Results({ evaluation }: ResultsProps) {
           data-testid="live-summary"
           aria-live="polite"
           aria-atomic="true"
-          className="max-w-summary text-ui text-ink-muted"
+          className="mt-4 max-w-md text-sm/6 text-ink-muted"
         >
           {evaluation
             ? summarize(evaluation)
@@ -43,11 +46,11 @@ export function Results({ evaluation }: ResultsProps) {
         </p>
       </div>
       {evaluation && (
-        <div className="md:shrink md:grow md:basis-criteria">
-          <table className="w-full border-collapse text-left text-ui">
+        <div>
+          <table className="w-full border-collapse text-left text-sm/6">
             <caption className="sr-only">WCAG 2.2 contrast criteria</caption>
             <thead>
-              <tr className="text-label text-ink-muted">
+              <tr className="text-xs/4 text-ink-muted">
                 <th scope="col" className="pr-4 pb-2 font-normal">
                   Criterion
                 </th>
@@ -66,11 +69,11 @@ export function Results({ evaluation }: ResultsProps) {
                   data-testid={c.id}
                   className="border-t border-hairline"
                 >
-                  <th scope="row" className="py-row pr-4 font-normal">
+                  <th scope="row" className="py-2 pr-4 font-normal">
                     {c.label}
                   </th>
-                  <td className="py-row pr-4">{c.threshold}:1</td>
-                  <td className="py-row">
+                  <td className="py-2 pr-4">{c.threshold}:1</td>
+                  <td className="py-2">
                     <StatusBadge pass={c.pass} />
                   </td>
                 </tr>

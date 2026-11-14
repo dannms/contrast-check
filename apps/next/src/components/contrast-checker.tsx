@@ -30,11 +30,11 @@ const DARK_SURFACE_LUMINANCE = 0.18;
 const BLACK: Rgb = { r: 0, g: 0, b: 0 };
 
 // Groups of the top row: stacked with hairlines on mobile, columns from 768px.
-const firstGroup = "pb-group md:pb-0";
+const firstGroup = "pb-6 md:pb-0";
 const nextGroup =
-  "border-t border-hairline pt-group pb-group md:border-t-0 md:border-l md:py-0 md:pl-column";
+  "border-t border-hairline py-6 md:border-t-0 md:border-l md:py-0 md:pl-8";
 const lastGroup =
-  "border-t border-hairline pt-group md:border-t-0 md:border-l md:pt-0 md:pl-column";
+  "border-t border-hairline pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-8";
 
 export function ContrastChecker({
   initialFg,
@@ -129,15 +129,15 @@ export function ContrastChecker({
       style={{ ...themeVars, colorScheme } as CSSProperties}
       className="min-h-dvh bg-surface text-ink"
     >
-      <div className="mx-auto flex w-full max-w-page flex-col px-gutter pt-page-top pb-page-bottom">
+      <div className="mx-auto flex w-full max-w-6xl flex-col px-4 pt-6 pb-12 md:px-8 md:pt-8 lg:px-12">
         <main>
           <header className="flex items-baseline justify-between">
-            <h1 className="text-title">Contrast Check</h1>
-            <p className="text-label text-ink-muted">WCAG 2.2</p>
+            <h1 className="text-sm/6 font-medium">Contrast Check</h1>
+            <p className="text-xs/4 text-ink-muted">WCAG 2.2</p>
           </header>
 
-          <div className="mt-row-top md:grid md:grid-cols-3 md:items-start">
-            <fieldset className="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2">
+          <div className="mt-8 md:mt-10 md:grid md:grid-cols-3 md:items-start lg:grid-cols-5">
+            <fieldset className="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2 lg:col-span-3">
               <legend className="sr-only">Colors</legend>
               <ColorField
                 id="fg"
@@ -156,14 +156,19 @@ export function ContrastChecker({
                 className={nextGroup}
               />
             </fieldset>
-            <div className={`flex flex-col gap-2 ${lastGroup}`}>
-              <p aria-hidden="true" className="text-label text-ink-muted">
+            <div
+              className={`flex flex-col gap-2 lg:col-span-2 lg:flex-row lg:flex-wrap lg:items-end ${lastGroup}`}
+            >
+              <p
+                aria-hidden="true"
+                className="text-xs/4 text-ink-muted lg:basis-full"
+              >
                 Actions
               </p>
               <button
                 type="button"
                 onClick={swap}
-                className="cc-outline cc-press h-control w-full cursor-pointer rounded-control border border-line bg-transparent px-4 text-ui text-ink md:w-auto md:self-start"
+                className="cc-outline h-12 w-full cursor-pointer rounded-xs border border-line bg-transparent px-4 text-sm/6 text-ink transition-transform duration-150 ease-press active:scale-97 motion-reduce:transition-none motion-reduce:active:scale-100 md:w-auto md:self-start lg:h-10 lg:self-auto"
               >
                 Swap colors
               </button>
@@ -184,26 +189,26 @@ export function ContrastChecker({
           {fg && bg ? <Preview fg={toHex(fg)} /> : null}
         </main>
 
-        <footer className="mt-footer-top flex flex-wrap gap-x-2 text-label text-ink-muted">
+        <footer className="mt-16 flex flex-wrap gap-x-2 text-xs/4 text-ink-muted">
           <span>Contrast Check</span>
           <span aria-hidden="true">·</span>
           <a
             href="https://contrast-check-next.vercel.app"
-            className="underline underline-offset-3"
+            className="underline underline-offset-4"
           >
             Next.js
           </a>
           <span aria-hidden="true">·</span>
           <a
             href="https://contrast-check-nuxt.vercel.app"
-            className="underline underline-offset-3"
+            className="underline underline-offset-4"
           >
             Nuxt
           </a>
           <span aria-hidden="true">·</span>
           <a
             href="https://github.com/dannms/contrast-check"
-            className="underline underline-offset-3"
+            className="underline underline-offset-4"
           >
             GitHub
           </a>
