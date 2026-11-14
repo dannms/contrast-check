@@ -163,7 +163,7 @@ export function ContrastChecker({
               <button
                 type="button"
                 onClick={swap}
-                className="cc-press h-control w-full cursor-pointer rounded-control bg-tint px-4 text-ui text-ink md:w-auto md:self-start"
+                className="cc-outline cc-press h-control w-full cursor-pointer rounded-control border border-line bg-transparent px-4 text-ui text-ink md:w-auto md:self-start"
               >
                 Swap colors
               </button>

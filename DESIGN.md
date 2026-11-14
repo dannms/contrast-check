@@ -21,7 +21,7 @@ Computed by `deriveTheme` in `packages/core` and exposed as CSS custom propertie
 | `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.5:1. When ink is already close to 4.5:1 it can equal ink. Labels and secondary text.                                                                     |
 | `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                                          |
 | `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                                             |
-| `--cc-tint`      | Ink mixed 90% toward the surface. Button fill. Ink on tint must be at least 4.5:1.                                                                                                                                                |
+| `--cc-tint`      | Ink mixed 90% toward the surface. Used only for the 200ms highlight of the Text input when a suggestion is applied. Not a button fill: near the AA limit it is almost the surface color.                                          |
 
 - Why ink keeps the exact color: pairs that pass AA appear exactly as chosen, as in Realtime Colors. Only failing pairs get an adjusted tone in the interface, and the specimen always shows the exact color.
 - Focus ring: `2px solid var(--cc-ink)`, offset 3px.
@@ -62,7 +62,7 @@ Mobile-first, one breakpoint at 768px.
   - Mobile: the three controls stacked at full width, 8px gap.
   - From 768px: Swap at automatic width; below it, the select and Suggest side by side in a row that wraps when space runs out.
   - The Swap button sits outside the "Colors" fieldset, right after it in the DOM. The fieldset contains only the Text and Background groups.
-- **Buttons and select**: height 44px, padding `0 16px`, radius 2px, 13px. Buttons on `--cc-tint` with ink text and no border. The select is transparent with a 1px `--cc-line` border.
+- **Buttons and select**: height 44px, padding `0 16px`, radius 2px, 13px. The select and the Swap colors button are transparent with a 1px `--cc-line` border and ink text (outline). Suggest accessible text color is the primary action: filled with `--cc-ink`, text in `--cc-surface`, no border (the contrast is the ink/surface pair itself, always at least 4.5:1). Hover (only in `(hover: hover) and (pointer: fine)`): the border of the select and of Swap becomes `--cc-ink`; Suggest does not change color (cursor only). Focus and `:active` are unchanged.
 - **Results**: `margin-top: 72px`, `padding-top: 40px`, 1px hairline top border.
   - Mobile: stacked. From 768px: a wrapping row with gap `48px 64px`, ratio block (`flex: 1 1 380px`) and criteria table (`flex: 1 1 400px`).
   - Ratio block: 12px muted label "Contrast ratio", the ratio, then the visible one-sentence summary (13px, muted, max 44ch), which is also the aria-live region.

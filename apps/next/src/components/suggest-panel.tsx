@@ -39,7 +39,7 @@ export function SuggestPanel({
           type="button"
           onClick={onSuggest}
           disabled={disabled}
-          className="cc-press h-control w-full cursor-pointer rounded-control bg-tint px-4 text-ui text-ink disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+          className="cc-press h-control w-full cursor-pointer rounded-control bg-ink px-4 text-ui text-surface disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
         >
           Suggest accessible text color
         </button>
