@@ -17,7 +17,7 @@ import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { ColorField } from "./color-field";
 import { Preview } from "./preview";
 import { Results } from "./results";
-import { SuggestPanel } from "./suggest-panel";
+import { type SuggestionMessage, SuggestPanel } from "./suggest-panel";
 
 type ContrastCheckerProps = {
   initialFg: string;
@@ -29,12 +29,13 @@ const DARK_SURFACE_LUMINANCE = 0.18;
 
 const BLACK: Rgb = { r: 0, g: 0, b: 0 };
 
-// Groups of the top row: stacked with hairlines on mobile, columns from 768px.
+// Groups of the top row: stacked with hairlines on mobile; from 768px the columns
+// are separated by a divider centered in the gap, so both sides have equal space.
 const firstGroup = "pb-6 md:pb-0";
 const nextGroup =
-  "border-t border-hairline py-6 md:border-t-0 md:border-l md:py-0 md:pl-8";
+  "relative border-t border-hairline py-6 md:border-t-0 md:py-0 md:before:absolute md:before:inset-y-0 md:before:-left-4 md:before:border-l md:before:border-hairline lg:before:-left-6";
 const lastGroup =
-  "border-t border-hairline pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-8";
+  "relative border-t border-hairline pt-6 md:border-t-0 md:pt-0 md:before:absolute md:before:inset-y-0 md:before:-left-4 md:before:border-l md:before:border-hairline lg:before:-left-6";
 
 export function ContrastChecker({
   initialFg,
@@ -43,7 +44,7 @@ export function ContrastChecker({
   const [fgText, setFgText] = useState(initialFg);
   const [bgText, setBgText] = useState(initialBg);
   const [target, setTarget] = useState<SuggestionTarget>("AA");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<SuggestionMessage | null>(null);
   const [flashing, setFlashing] = useState(false);
   const [lastFg, setLastFg] = useState(initialFg);
   const [lastBg, setLastBg] = useState(initialBg);
@@ -90,37 +91,42 @@ export function ContrastChecker({
 
   const changeFg = (value: string) => {
     setFgText(value);
-    setMessage("");
+    setMessage(null);
   };
   const changeBg = (value: string) => {
     setBgText(value);
-    setMessage("");
+    setMessage(null);
   };
 
   const swap = () => {
     setFgText(bgText);
     setBgText(fgText);
-    setMessage("");
+    setMessage(null);
   };
 
   const suggest = () => {
     if (!fg || !bg) return;
     const suggestion = suggestTextColor(fg, bg, target);
     if (!suggestion) {
-      setMessage(
-        `No text color with this hue and saturation can reach ${target} on this background. Try a different background.`,
-      );
+      setMessage({
+        kind: "impossible",
+        text: `No text color with this hue and saturation can reach ${target} on this background. Try a different background.`,
+      });
       return;
     }
     if (suggestion.hex === fgText.toUpperCase()) {
-      setMessage(`The text color already meets ${target}.`);
+      setMessage({
+        kind: "met",
+        text: `The text color already meets ${target}.`,
+      });
       return;
     }
     setFgText(suggestion.hex);
     setFlashing(true);
-    setMessage(
-      `Text color set to ${suggestion.hex}, ${formatRatio(suggestion.ratio)}, meeting ${target}.`,
-    );
+    setMessage({
+      kind: "applied",
+      text: `Text color set to ${suggestion.hex}, ${formatRatio(suggestion.ratio)}, meeting ${target}.`,
+    });
   };
 
   return (
@@ -136,8 +142,8 @@ export function ContrastChecker({
             <p className="text-xs/4 text-ink-muted">WCAG 2.2</p>
           </header>
 
-          <div className="mt-8 md:mt-10 md:grid md:grid-cols-3 md:items-start lg:grid-cols-5">
-            <fieldset className="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2 lg:col-span-3">
+          <div className="mt-8 md:mt-10 md:grid md:grid-cols-3 md:items-start md:gap-x-8 lg:flex lg:gap-x-12">
+            <fieldset className="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2 md:gap-x-8 lg:flex-1 lg:gap-x-12">
               <legend className="sr-only">Colors</legend>
               <ColorField
                 id="fg"
@@ -157,7 +163,7 @@ export function ContrastChecker({
               />
             </fieldset>
             <div
-              className={`flex flex-col gap-2 lg:col-span-2 lg:grid lg:auto-cols-max ${lastGroup}`}
+              className={`flex flex-col gap-2 lg:grid lg:w-96 lg:flex-none lg:grid-cols-actions ${lastGroup}`}
             >
               <p
                 aria-hidden="true"
@@ -176,7 +182,7 @@ export function ContrastChecker({
                 target={target}
                 onTargetChange={(t) => {
                   setTarget(t);
-                  setMessage("");
+                  setMessage(null);
                 }}
                 onSuggest={suggest}
                 disabled={!evaluation}

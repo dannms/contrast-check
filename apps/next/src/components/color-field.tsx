@@ -31,7 +31,7 @@ export function ColorField({
       <label htmlFor={id} className="block text-xs/4 text-ink-muted">
         {label}
       </label>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 md:justify-start">
+      <div className="mt-2 flex items-center gap-4 md:gap-2 lg:gap-4">
         <input
           id={id}
           type="text"
@@ -44,7 +44,7 @@ export function ColorField({
           spellCheck={false}
           size={7}
           maxLength={7}
-          className={`field-sizing-content min-w-40 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink md:min-w-52 md:text-5xl ${flashing ? "animate-flash motion-reduce:animate-none" : ""}`}
+          className={`min-w-0 flex-1 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink xl:text-5xl ${flashing ? "animate-flash motion-reduce:animate-none" : ""}`}
         />
         <input
           type="color"
