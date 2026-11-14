@@ -5,25 +5,6 @@
 
 export type Rgb = { r: number; g: number; b: number };
 
-export type CriterionId =
-  | "aa-normal"
-  | "aa-large"
-  | "aaa-normal"
-  | "aaa-large"
-  | "ui";
-
-export type Criterion = {
-  id: CriterionId;
-  label: string;
-  threshold: number;
-  pass: boolean;
-};
-
-export type Evaluation = {
-  ratio: number;
-  criteria: Criterion[];
-};
-
 export type SuggestionTarget = "AA" | "AAA";
 
 export type Suggestion = {
@@ -83,45 +64,6 @@ export function contrastRatio(a: Rgb, b: Rgb): number {
 /** Formats a ratio with two decimals, e.g. "4.54:1". */
 export function formatRatio(ratio: number): string {
   return `${ratio.toFixed(2)}:1`;
-}
-
-const CRITERIA: ReadonlyArray<Omit<Criterion, "pass">> = [
-  { id: "aa-normal", label: "AA normal text", threshold: 4.5 },
-  { id: "aa-large", label: "AA large text", threshold: 3 },
-  { id: "aaa-normal", label: "AAA normal text", threshold: 7 },
-  { id: "aaa-large", label: "AAA large text", threshold: 4.5 },
-  { id: "ui", label: "UI components and graphics", threshold: 3 },
-];
-
-/** Computes the ratio and the pass/fail status of every WCAG 2.2 criterion. */
-export function evaluate(fg: Rgb, bg: Rgb): Evaluation {
-  const ratio = contrastRatio(fg, bg);
-  return {
-    ratio,
-    criteria: CRITERIA.map((c) => ({ ...c, pass: ratio >= c.threshold })),
-  };
-}
-
-/**
- * Short, screen-reader friendly summary of an evaluation, e.g.
- * "4.54:1. Passes AA normal text, AA large text. Fails AAA normal text."
- */
-export function summarize(evaluation: Evaluation): string {
-  const passed = evaluation.criteria.filter((c) => c.pass).map((c) => c.label);
-  const failed = evaluation.criteria.filter((c) => !c.pass).map((c) => c.label);
-  const parts = [`${formatRatio(evaluation.ratio)}.`];
-  if (failed.length === 0) parts.push("Passes all criteria.");
-  else if (passed.length === 0) parts.push("Fails all criteria.");
-  else {
-    parts.push(`Passes ${passed.join(", ")}.`);
-    parts.push(`Fails ${failed.join(", ")}.`);
-  }
-  return parts.join(" ");
-}
-
-/** One short sentence on where the ratio stands, for the visible text under the ratio. */
-export function verdict(evaluation: Evaluation): string {
-  return verdictForRatio(evaluation.ratio);
 }
 
 /** The four verdict sentences, from the ratio alone. */

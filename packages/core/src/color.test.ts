@@ -1,13 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  contrastRatio,
-  evaluate,
-  formatRatio,
-  parseHex,
-  summarize,
-  toHex,
-  verdict,
-} from "./color";
+import { contrastRatio, parseHex, toHex, verdictForRatio } from "./color";
 import { suggestTextColor } from "./lightness";
 import { rgbToOklch } from "./oklch";
 
@@ -61,27 +53,6 @@ describe("contrastRatio", () => {
   });
 });
 
-describe("evaluate", () => {
-  it("passes AA normal at 4.54:1", () => {
-    const result = evaluate(rgb("#767676"), rgb("#FFFFFF"));
-    expect(formatRatio(result.ratio)).toBe("4.54:1");
-    const byId = Object.fromEntries(result.criteria.map((c) => [c.id, c.pass]));
-    expect(byId).toEqual({
-      "aa-normal": true,
-      "aa-large": true,
-      "aaa-normal": false,
-      "aaa-large": true,
-      ui: true,
-    });
-  });
-
-  it("fails AA normal at 4.48:1", () => {
-    const result = evaluate(rgb("#777777"), rgb("#FFFFFF"));
-    expect(result.criteria.find((c) => c.id === "aa-normal")?.pass).toBe(false);
-    expect(result.criteria.find((c) => c.id === "aa-large")?.pass).toBe(true);
-  });
-});
-
 describe("suggestTextColor", () => {
   it("reaches AA while preserving hue", () => {
     const fg = rgb("#FF8040");
@@ -125,59 +96,22 @@ describe("toHex", () => {
   });
 });
 
-describe("summarize", () => {
-  it("lists passing and failing criteria", () => {
-    expect(summarize(evaluate(rgb("#767676"), rgb("#FFFFFF")))).toBe(
-      "4.54:1. Passes AA normal text, AA large text, AAA large text, UI components and graphics. Fails AAA normal text.",
-    );
-  });
-
-  it("says all criteria pass without an empty list", () => {
-    expect(summarize(evaluate(rgb("#000000"), rgb("#FFFFFF")))).toBe(
-      "21.00:1. Passes all criteria.",
-    );
-  });
-
-  it("says all criteria fail without an empty list", () => {
-    expect(summarize(evaluate(rgb("#FFFFFF"), rgb("#FFFFFF")))).toBe(
-      "1.00:1. Fails all criteria.",
-    );
-  });
-});
-
-describe("verdict", () => {
-  const at = (ratio: number) => ({ ratio, criteria: [] });
-
+describe("verdictForRatio", () => {
   it("covers the four bands with their boundaries", () => {
-    expect(verdict(at(21))).toBe("Passes AAA for all text.");
-    expect(verdict(at(7))).toBe("Passes AAA for all text.");
-    expect(verdict(at(6.99))).toBe("Passes AA. AAA needs 7:1.");
-    expect(verdict(at(4.5))).toBe("Passes AA. AAA needs 7:1.");
-    expect(verdict(at(4.49))).toBe(
+    expect(verdictForRatio(21)).toBe("Passes AAA for all text.");
+    expect(verdictForRatio(7)).toBe("Passes AAA for all text.");
+    expect(verdictForRatio(6.99)).toBe("Passes AA. AAA needs 7:1.");
+    expect(verdictForRatio(4.5)).toBe("Passes AA. AAA needs 7:1.");
+    expect(verdictForRatio(4.49)).toBe(
       "Large text and UI only. Normal text needs 4.5:1.",
     );
-    expect(verdict(at(3))).toBe(
+    expect(verdictForRatio(3)).toBe(
       "Large text and UI only. Normal text needs 4.5:1.",
     );
-    expect(verdict(at(2.99))).toBe(
+    expect(verdictForRatio(2.99)).toBe(
       "Fails every criterion. Normal text needs 4.5:1.",
     );
-    expect(verdict(at(1))).toBe(
-      "Fails every criterion. Normal text needs 4.5:1.",
-    );
-  });
-
-  it("matches the reference pairs", () => {
-    expect(verdict(evaluate(rgb("#000000"), rgb("#FFFFFF")))).toBe(
-      "Passes AAA for all text.",
-    );
-    expect(verdict(evaluate(rgb("#767676"), rgb("#FFFFFF")))).toBe(
-      "Passes AA. AAA needs 7:1.",
-    );
-    expect(verdict(evaluate(rgb("#777777"), rgb("#FFFFFF")))).toBe(
-      "Large text and UI only. Normal text needs 4.5:1.",
-    );
-    expect(verdict(evaluate(rgb("#FFFFFF"), rgb("#FFFFFF")))).toBe(
+    expect(verdictForRatio(1)).toBe(
       "Fails every criterion. Normal text needs 4.5:1.",
     );
   });
