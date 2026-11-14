@@ -28,7 +28,7 @@ function onPick(event: Event) {
   <div>
     <label :for="id" class="block text-xs/4 text-ink-muted">{{ label }}</label>
     <div
-      class="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 md:justify-start"
+      class="mt-2 flex items-center gap-4 md:gap-2 lg:gap-4"
     >
       <input
         :id="id"
@@ -40,7 +40,7 @@ function onPick(event: Event) {
         spellcheck="false"
         size="7"
         maxlength="7"
-        class="field-sizing-content min-w-40 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink md:min-w-52 md:text-5xl"
+        class="min-w-0 flex-1 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink xl:text-5xl"
         :class="{ 'animate-flash motion-reduce:animate-none': flashing }"
       />
       <input

@@ -12,6 +12,7 @@ import {
   themeToCssVars,
   toHex,
 } from "@contrast-check/core";
+import type { SuggestionMessage } from "./SuggestPanel.vue";
 
 const props = defineProps<{
   initialFg: string;
@@ -25,17 +26,18 @@ const FLASH_MS = 200;
 
 const BLACK: Rgb = { r: 0, g: 0, b: 0 };
 
-// Groups of the top row: stacked with hairlines on mobile, columns from 768px.
+// Groups of the top row: stacked with hairlines on mobile; from 768px the columns
+// are separated by a divider centered in the gap, so both sides have equal space.
 const firstGroup = "pb-6 md:pb-0";
 const nextGroup =
-  "border-t border-hairline py-6 md:border-t-0 md:border-l md:py-0 md:pl-8";
+  "relative border-t border-hairline py-6 md:border-t-0 md:py-0 md:before:absolute md:before:inset-y-0 md:before:-left-4 md:before:border-l md:before:border-hairline lg:before:-left-6";
 const lastGroup =
-  "border-t border-hairline pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-8";
+  "relative border-t border-hairline pt-6 md:border-t-0 md:pt-0 md:before:absolute md:before:inset-y-0 md:before:-left-4 md:before:border-l md:before:border-hairline lg:before:-left-6";
 
 const fgText = ref(props.initialFg);
 const bgText = ref(props.initialBg);
 const target = ref<SuggestionTarget>("AA");
-const message = ref("");
+const message = ref<SuggestionMessage | null>(null);
 const flashing = ref(false);
 const lastFg = ref(props.initialFg);
 const lastBg = ref(props.initialBg);
@@ -116,38 +118,47 @@ onBeforeUnmount(() => clearTimeout(flashTimer));
 
 function changeFg(value: string) {
   fgText.value = value;
-  message.value = "";
+  message.value = null;
 }
 
 function changeBg(value: string) {
   bgText.value = value;
-  message.value = "";
+  message.value = null;
 }
 
 function changeTarget(value: SuggestionTarget) {
   target.value = value;
-  message.value = "";
+  message.value = null;
 }
 
 function swap() {
   [fgText.value, bgText.value] = [bgText.value, fgText.value];
-  message.value = "";
+  message.value = null;
 }
 
 function suggest() {
   if (!fg.value || !bg.value) return;
   const suggestion = suggestTextColor(fg.value, bg.value, target.value);
   if (!suggestion) {
-    message.value = `No text color with this hue and saturation can reach ${target.value} on this background. Try a different background.`;
+    message.value = {
+      kind: "impossible",
+      text: `No text color with this hue and saturation can reach ${target.value} on this background. Try a different background.`,
+    };
     return;
   }
   if (suggestion.hex === fgText.value.toUpperCase()) {
-    message.value = `The text color already meets ${target.value}.`;
+    message.value = {
+      kind: "met",
+      text: `The text color already meets ${target.value}.`,
+    };
     return;
   }
   fgText.value = suggestion.hex;
   flash();
-  message.value = `Text color set to ${suggestion.hex}, ${formatRatio(suggestion.ratio)}, meeting ${target.value}.`;
+  message.value = {
+    kind: "applied",
+    text: `Text color set to ${suggestion.hex}, ${formatRatio(suggestion.ratio)}, meeting ${target.value}.`,
+  };
 }
 </script>
 
@@ -166,9 +177,9 @@ function suggest() {
           <p class="text-xs/4 text-ink-muted">WCAG 2.2</p>
         </header>
 
-        <div class="mt-8 md:mt-10 md:grid md:grid-cols-3 md:items-start lg:grid-cols-5">
+        <div class="mt-8 md:mt-10 md:grid md:grid-cols-3 md:items-start md:gap-x-8 lg:flex lg:gap-x-12">
           <fieldset
-            class="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2 lg:col-span-3"
+            class="m-0 grid min-w-0 border-0 p-0 md:col-span-2 md:grid-cols-2 md:gap-x-8 lg:flex-1 lg:gap-x-12"
           >
             <legend class="sr-only">Colors</legend>
             <ColorField
@@ -188,7 +199,7 @@ function suggest() {
             />
           </fieldset>
           <div
-            class="flex flex-col gap-2 lg:col-span-2 lg:grid lg:auto-cols-max"
+            class="flex flex-col gap-2 lg:grid lg:w-96 lg:flex-none lg:grid-cols-actions"
             :class="lastGroup"
           >
             <p aria-hidden="true" class="text-xs/4 text-ink-muted lg:col-start-1 lg:row-start-1">
