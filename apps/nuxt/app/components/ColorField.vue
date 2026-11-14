@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { parseHex, toHex } from "@contrast-check/core";
 
+/** Hex text input kept in sync with a native color picker shown as a circle. */
 const props = defineProps<{
   id: string;
   label: string;
+  /** Plays the short tint flash on the input (after a suggestion is applied). */
+  flashing?: boolean;
 }>();
 
 const model = defineModel<string>({ required: true });
@@ -22,11 +25,9 @@ function onPick(event: Event) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-tight">
-    <label :for="id" class="font-semibold">
-      {{ label }}
-    </label>
-    <div class="flex items-center gap-tight">
+  <div class="flex flex-col gap-2">
+    <label :for="id" class="text-label text-ink-muted">{{ label }}</label>
+    <div class="flex items-center justify-between gap-4 md:justify-start">
       <input
         :id="id"
         v-model="model"
@@ -36,18 +37,19 @@ function onPick(event: Event) {
         autocomplete="off"
         spellcheck="false"
         maxlength="7"
-        class="h-11 w-full min-w-0 rounded-control border border-edge bg-page px-3 font-mono text-ink aria-[invalid=true]:border-fail aria-[invalid=true]:border-2"
+        class="w-hex min-w-0 rounded-none border-0 border-b border-line bg-transparent p-0 pb-1.5 text-input text-ink aria-[invalid=true]:border-ink"
+        :class="{ 'cc-flash': flashing }"
       />
       <input
         type="color"
         :aria-label="`${label} color picker`"
         :value="pickerValue"
-        class="h-11 w-14 shrink-0 cursor-pointer rounded-control border border-edge bg-page p-1"
+        class="cc-swatch shrink-0"
         @input="onPick"
       />
     </div>
-    <p :id="hintId" class="text-sm text-muted">Hex, like #1A2B3C or #ABC</p>
-    <p v-if="invalid" :id="errorId" class="text-sm font-semibold text-fail">
+    <p :id="hintId" class="sr-only">Hex, like #1A2B3C or #ABC</p>
+    <p v-if="invalid" :id="errorId" class="text-label font-medium text-ink">
       Enter a valid hex color, such as #1A2B3C or #ABC.
     </p>
   </div>

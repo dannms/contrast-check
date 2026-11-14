@@ -1,19 +1,15 @@
 <script setup lang="ts">
-/** Pass/Fail indicator: icon plus text, never color alone. */
+/** Pass/Fail indicator: icon plus word, same ink for both, never color alone. */
 defineProps<{ pass: boolean }>();
 </script>
 
 <template>
-  <span
-    class="inline-flex items-center gap-tight font-semibold"
-    :class="pass ? 'text-pass' : 'text-fail'"
-  >
+  <span class="inline-flex items-center gap-2 font-medium">
     <svg
       aria-hidden="true"
       focusable="false"
       viewBox="0 0 20 20"
-      width="20"
-      height="20"
+      class="size-icon"
       fill="none"
       stroke="currentColor"
       stroke-width="2.5"
