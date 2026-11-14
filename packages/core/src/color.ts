@@ -143,7 +143,11 @@ export function summarize(evaluation: Evaluation): string {
 
 /** One short sentence on where the ratio stands, for the visible text under the ratio. */
 export function verdict(evaluation: Evaluation): string {
-  const { ratio } = evaluation;
+  return verdictForRatio(evaluation.ratio);
+}
+
+/** The four verdict sentences, from the ratio alone. */
+export function verdictForRatio(ratio: number): string {
   if (ratio >= 7) return "Passes AAA for all text.";
   if (ratio >= 4.5) return "Passes AA. AAA needs 7:1.";
   if (ratio >= 3) return "Large text and UI only. Normal text needs 4.5:1.";

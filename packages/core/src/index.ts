@@ -6,3 +6,4 @@ export * from "./palette";
 export * from "./scale";
 export * from "./theme";
 export * from "./url-state";
+export * from "./view";
