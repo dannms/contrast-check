@@ -69,6 +69,9 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - The Suggest button and the note "Changes only the lightness…" are gone. The Fix button of each pair replaces Suggest.
 5. **Results**: `mt-8 pt-8`, 1px hairline top border. Mobile: stacked, `gap-y-8`. From `lg`: `grid-cols-5 gap-x-16`; the pair in focus takes `col-span-2` on the left and the table takes `col-span-3` on the right.
    - **Pair in focus** (first in the DOM): label "In focus · <pair name>" (`text-xs/4`, muted); the ratio (`mt-2`); the `verdict()` sentence (`mt-4 max-w-md text-sm/6`); the message (`mt-2 min-h-12 text-sm/6`, `aria-live="polite"`).
+   - **Live summary**: a visually hidden (`sr-only`) region with `aria-live="polite"`, outside the two blocks and right after the Results section in the DOM. It announces the state in short text: "<pair in focus name>, <ratio> to 1. <palette verdict>." (for example "Text on background, 16.09 to 1. Passes AA · 6 of 6 pairs."). It updates when any color, the level, the Accent as text switch or the pair in focus changes. With an invalid hex, the announcement keeps the last valid pair, like the theme.
+   - The visible message (`min-h-12`) keeps its own `aria-live`: it announces the result of an action (Fix, Copy); the hidden region announces the state.
+   - The four texts of `verdict()` are defined in the core (`packages/core`, function `verdict`) and are not repeated here.
    - The message space is always reserved (two 24px lines), so a message never shifts the layout. Texts: "<Role> set to #HEX.", "Can't fix without breaking <pair> and N more." ("and N more" only when more than one pair would break), "Theme copied.", "Copy failed. Select the code and copy it."
    - **Pairs table** (after it in the DOM): first the palette verdict (`text-sm/6 font-medium`), "Passes AA · 6 of 6 pairs" or "Fails AA · 3 of 6 pairs fail"; then, `mt-4`, a `<table>` with a visually hidden caption "Palette pairs at <level>".
    - Columns: Pair; Ratio and Minimum (both from `md`); Result (`size-4` icon plus Pass or Fail at `font-medium`, same color for both, never color alone); Fix (header visually hidden).
@@ -132,6 +135,7 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
 - Chrome text at least 4.5:1.
 - Control boundaries at least 3:1.
 - The Preview is exempt by design: it is the thing being tested.
+- Changes of state are announced through one polite live region; action results through the visible message.
 - Phase 3 rewrites the E2E suite for this interface (design, section 6.3); the new ids and `data-testid` values defined there become the contract.
 
 ## 9. Out of scope
