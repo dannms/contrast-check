@@ -53,7 +53,7 @@ export function ColorField({
           className="cc-swatch shrink-0"
         />
       </div>
-      <p id={hintId} className="text-label text-ink-muted">
+      <p id={hintId} className="sr-only">
         Hex, like #1A2B3C or #ABC
       </p>
       {invalid && (

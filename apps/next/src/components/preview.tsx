@@ -25,7 +25,7 @@ export function Preview({ fg }: PreviewProps) {
       >
         <p className="text-spec-lg">Pack my box with five dozen liquor jugs.</p>
         <p className="text-spec-md">
-          Large text, 24px bold. Pack my box with five dozen liquor jugs.
+          Large text, 24px. Pack my box with five dozen liquor jugs.
         </p>
         <p className="max-w-prose text-spec-body">
           Normal text, 16px. The quick brown fox jumps over the lazy dog.

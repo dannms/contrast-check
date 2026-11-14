@@ -44,12 +44,11 @@ export function SuggestPanel({
           Suggest accessible text color
         </button>
       </div>
+      <p className="text-label text-ink-muted">
+        Changes only the lightness of your text color.
+      </p>
       <p aria-live="polite" className="min-h-6 text-label text-ink-muted">
         {message}
-      </p>
-      <p className="max-w-summary text-label text-ink-muted">
-        Keeps the hue and saturation of the text color and adjusts only its
-        lightness until the target is met.
       </p>
     </section>
   );

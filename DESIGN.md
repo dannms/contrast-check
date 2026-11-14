@@ -56,8 +56,8 @@ Mobile-first, one breakpoint at 768px.
 - **Color group**: label (12px, muted), then a row with the hex input and a 44x44 circular color swatch (native color input, 1px line border).
   - Mobile: input on the left, swatch on the right (space-between). From 768px: swatch right after the input, 16px gap.
   - Input: transparent background, no border except a 1px bottom border in `--cc-line`, 6px bottom padding, width fits 7 characters.
-  - Hint text 12px muted. Error text 12px ink.
-- **Actions group**: contains, in this order in the DOM and on screen: the Swap colors button, the Target level select and the Suggest accessible text color button, followed by the (live) message (12px, muted). Visual order and focus order are the same (WCAG 2.4.3).
+  - The hint ("Hex, like #1A2B3C or #ABC") stays in the DOM and tied to the input by `aria-describedby`, but is visually hidden. Error text 12px ink, visible.
+- **Actions group**: contains, in this order in the DOM and on screen: the Swap colors button, the Target level select and the Suggest accessible text color button, with a 12px muted note right below the Suggest button ("Changes only the lightness of your text color."), followed by the (live) message (12px, muted). Visual order and focus order are the same (WCAG 2.4.3).
   - Visible group label "Actions" (12px, muted), decorative (`aria-hidden`), aligned with the "Text" and "Background" labels. The suggestion section keeps its h2 "Suggestion", visually hidden.
   - Mobile: the three controls stacked at full width, 8px gap.
   - From 768px: Swap at automatic width; below it, the select and Suggest side by side in a row that wraps when space runs out.
@@ -67,7 +67,7 @@ Mobile-first, one breakpoint at 768px.
   - Mobile: stacked. From 768px: a wrapping row with gap `48px 64px`, ratio block (`flex: 1 1 380px`) and criteria table (`flex: 1 1 400px`).
   - Ratio block: 12px muted label "Contrast ratio", the ratio, then the visible one-sentence summary (13px, muted, max 44ch), which is also the aria-live region.
 - **Criteria table**: header row 12px muted. Rows 13px with a 1px hairline top border and 13px vertical padding. The result is a 14px icon plus "Pass" or "Fail" at weight 500, in the same ink color for both (never color alone).
-- **Preview**: `margin-top: 80px`, `padding-top: 40px`, 1px hairline top border. Label "Preview" plus "your text color, unaltered" (12px, muted). Specimen lines in the raw text color, directly on the surface, no frame.
+- **Preview**: `margin-top: 80px`, `padding-top: 40px`, 1px hairline top border. Label "Preview" plus "your text color, unaltered" (12px, muted). Specimen lines in the raw text color, directly on the surface, no frame. The 24px line reads "Large text, 24px." (DM Mono has no 700 weight, and 24px already counts as large text in WCAG at any weight).
 - **Footer**: `margin-top: 96px`, 12px muted: Contrast Check, Next.js, Nuxt, GitHub. Links underlined, offset 3px.
 
 ## 5. Motion
