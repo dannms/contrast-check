@@ -14,14 +14,14 @@ Direction: minimalism in the style of Scale (hihayk.github.io/scale) combined wi
 
 Computed by `deriveTheme` in `packages/core` and exposed as CSS custom properties on the app root.
 
-| Role             | Rule                                                                                                                                                                                                                              |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--cc-surface`   | The chosen background.                                                                                                                                                                                                            |
-| `--cc-ink`       | The chosen text color, unaltered, when the pair reaches 4.5:1 (AA). Otherwise the closest tone of it (same hue and saturation, HSL lightness only) reaching 4.5:1. If impossible, the higher-contrast of `#141416` and `#FAFAF7`. |
-| `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.5:1. When ink is already close to 4.5:1 it can equal ink. Labels and secondary text.                                                                     |
-| `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                                          |
-| `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                                             |
-| `--cc-tint`      | Ink mixed 90% toward the surface. Used only for the 200ms highlight of the Text input when a suggestion is applied. Not a button fill: near the AA limit it is almost the surface color.                                          |
+| Role             | Rule                                                                                                                                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--cc-surface`   | The chosen background.                                                                                                                                                                                                          |
+| `--cc-ink`       | The chosen text color, unaltered, when the pair reaches 4.5:1 (AA). Otherwise the closest tone of it (same hue and chroma, OKLCH lightness only) reaching 4.5:1. If impossible, the higher-contrast of `#141416` and `#FAFAF7`. |
+| `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.5:1. When ink is already close to 4.5:1 it can equal ink. Labels and secondary text.                                                                   |
+| `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                                        |
+| `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                                           |
+| `--cc-tint`      | Ink mixed 90% toward the surface. Used only for the 200ms highlight of the Text input when a suggestion is applied. Not a button fill: near the AA limit it is almost the surface color.                                        |
 
 - Why ink keeps the exact color: pairs that pass AA appear exactly as chosen, as in Realtime Colors. Only failing pairs get an adjusted tone in the interface, and the specimen always shows the exact color.
 - Focus ring: `outline-2 outline-offset-2 outline-ink` (2px, ink color, 2px offset).

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { contrastRatio, parseHex, type Rgb, rgbToHsl } from "./color";
+import { contrastRatio, parseHex, type Rgb } from "./color";
+import { rgbToOklch } from "./oklch";
 import { deriveTheme, fadeToward, mix, themeToCssVars } from "./theme";
 
 const rgb = (hex: string): Rgb => {
@@ -67,14 +68,14 @@ describe("deriveTheme", () => {
           expect(ratio(theme.ink, bg)).toBeGreaterThanOrEqual(4.5);
         });
 
-        const { s } = rgbToHsl(rgb(fg));
+        const { c } = rgbToOklch(rgb(fg));
         const adjusted = !["#141416", "#FAFAF7"].includes(theme.ink);
-        if (s > 0 && adjusted) {
+        if (c > 0.02 && adjusted) {
           it("preserves the hue of a chromatic text color", () => {
             const diff = Math.abs(
-              rgbToHsl(rgb(theme.ink)).h - rgbToHsl(rgb(fg)).h,
+              rgbToOklch(rgb(theme.ink)).h - rgbToOklch(rgb(fg)).h,
             );
-            expect(Math.min(diff, 360 - diff)).toBeLessThan(4);
+            expect(Math.min(diff, 360 - diff)).toBeLessThan(2);
           });
         }
       }

@@ -4,12 +4,12 @@ import {
   evaluate,
   formatRatio,
   parseHex,
-  rgbToHsl,
   suggestTextColor,
   summarize,
   toHex,
   verdict,
 } from "./color";
+import { rgbToOklch } from "./oklch";
 
 const rgb = (hex: string) => {
   const parsed = parseHex(hex);
@@ -90,8 +90,8 @@ describe("suggestTextColor", () => {
     expect(suggestion).not.toBeNull();
     const out = rgb(suggestion?.hex ?? "");
     expect(contrastRatio(out, bg)).toBeGreaterThanOrEqual(4.5);
-    const hueDiff = Math.abs(rgbToHsl(out).h - rgbToHsl(fg).h);
-    expect(Math.min(hueDiff, 360 - hueDiff)).toBeLessThan(3);
+    const hueDiff = Math.abs(rgbToOklch(out).h - rgbToOklch(fg).h);
+    expect(Math.min(hueDiff, 360 - hueDiff)).toBeLessThan(2);
   });
 
   it("reaches AAA", () => {
@@ -108,8 +108,8 @@ describe("suggestTextColor", () => {
     const fg = rgb("#404060");
     const suggestion = suggestTextColor(fg, rgb("#101010"), "AA");
     expect(suggestion).not.toBeNull();
-    expect(rgbToHsl(rgb(suggestion?.hex ?? "")).l).toBeGreaterThan(
-      rgbToHsl(fg).l,
+    expect(rgbToOklch(rgb(suggestion?.hex ?? "")).l).toBeGreaterThan(
+      rgbToOklch(fg).l,
     );
     expect(suggestion?.ratio).toBeGreaterThanOrEqual(4.5);
   });

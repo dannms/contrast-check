@@ -3,8 +3,9 @@
  * No dependencies, no side effects.
  */
 
+import { closestPassingLightness } from "./lightness";
+
 export type Rgb = { r: number; g: number; b: number };
-export type Hsl = { h: number; s: number; l: number };
 
 export type CriterionId =
   | "aa-normal"
@@ -103,100 +104,23 @@ export function evaluate(fg: Rgb, bg: Rgb): Evaluation {
   };
 }
 
-export function rgbToHsl({ r, g, b }: Rgb): Hsl {
-  const rn = r / 255;
-  const gn = g / 255;
-  const bn = b / 255;
-  const max = Math.max(rn, gn, bn);
-  const min = Math.min(rn, gn, bn);
-  const l = (max + min) / 2;
-  const d = max - min;
-  if (d === 0) return { h: 0, s: 0, l };
-  const s = d / (1 - Math.abs(2 * l - 1));
-  let h: number;
-  if (max === rn) h = ((gn - bn) / d) % 6;
-  else if (max === gn) h = (bn - rn) / d + 2;
-  else h = (rn - gn) / d + 4;
-  return { h: (h * 60 + 360) % 360, s, l };
-}
-
-export function hslToRgb({ h, s, l }: Hsl): Rgb {
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-  const m = l - c / 2;
-  const sector = Math.floor(h / 60) % 6;
-  const [r, g, b] = [
-    [c, x, 0],
-    [x, c, 0],
-    [0, c, x],
-    [0, x, c],
-    [x, 0, c],
-    [c, 0, x],
-  ][sector] as [number, number, number];
-  const to255 = (v: number) => Math.round((v + m) * 255);
-  return { r: to255(r), g: to255(g), b: to255(b) };
-}
-
-const SEARCH_STEPS = 24;
-
 /**
- * Suggests the closest text color that reaches the target contrast on `bg`,
- * keeping hue and saturation and changing only HSL lightness.
+ * Suggests the closest text color that reaches the target contrast on `bg`.
  *
- * Contrast is not monotonic in lightness (it dips where the text luminance
- * crosses the background's), so each direction is searched separately with a
- * monotonic predicate: "lighter than bg and passing" and "darker than bg and
- * passing". Returns null when neither direction can reach the target.
+ * It keeps the OKLCH hue and chroma of `fg` and changes only the perceptual
+ * lightness (see `closestPassingLightness`). The search samples lightness
+ * instead of bisecting it: contrast is not monotonic in lightness, because it dips
+ * where the text luminance crosses the background's, so lighter and darker
+ * candidates both have to be considered. The color comes back unchanged when it
+ * already passes, and `null` when no lightness can reach the target.
  */
 export function suggestTextColor(
   fg: Rgb,
   bg: Rgb,
   target: SuggestionTarget = "AA",
 ): Suggestion | null {
-  const threshold = TARGET_THRESHOLDS[target];
-  const original = contrastRatio(fg, bg);
-  if (original >= threshold) return { hex: toHex(fg), ratio: original };
-
-  const { h, s, l: l0 } = rgbToHsl(fg);
-  const bgLum = relativeLuminance(bg);
-  const at = (l: number) => hslToRgb({ h, s, l });
-  const passesLighter = (l: number) => {
-    const c = at(l);
-    return relativeLuminance(c) >= bgLum && contrastRatio(c, bg) >= threshold;
-  };
-  const passesDarker = (l: number) => {
-    const c = at(l);
-    return relativeLuminance(c) <= bgLum && contrastRatio(c, bg) >= threshold;
-  };
-
-  const candidates: number[] = [];
-
-  if (passesLighter(1)) {
-    let lo = 0;
-    let hi = 1;
-    for (let i = 0; i < SEARCH_STEPS; i++) {
-      const mid = (lo + hi) / 2;
-      if (passesLighter(mid)) hi = mid;
-      else lo = mid;
-    }
-    candidates.push(hi);
-  }
-  if (passesDarker(0)) {
-    let lo = 0;
-    let hi = 1;
-    for (let i = 0; i < SEARCH_STEPS; i++) {
-      const mid = (lo + hi) / 2;
-      if (passesDarker(mid)) lo = mid;
-      else hi = mid;
-    }
-    candidates.push(lo);
-  }
-
-  const best = candidates.sort(
-    (a, b) => Math.abs(a - l0) - Math.abs(b - l0),
-  )[0];
-  if (best === undefined) return null;
-  const color = at(best);
+  const color = closestPassingLightness(fg, bg, TARGET_THRESHOLDS[target]);
+  if (!color) return null;
   return { hex: toHex(color), ratio: contrastRatio(color, bg) };
 }
 
