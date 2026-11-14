@@ -1,14 +1,50 @@
 import type { SuggestionTarget } from "@contrast-check/core";
 
+export type SuggestionMessage = {
+  kind: "applied" | "met" | "impossible";
+  text: string;
+};
+
 type SuggestPanelProps = {
   target: SuggestionTarget;
   onTargetChange: (target: SuggestionTarget) => void;
   onSuggest: () => void;
   disabled: boolean;
-  message: string;
+  message: SuggestionMessage | null;
 };
 
-// From lg this section spans the two columns and five rows of the Actions grid
+/** Check, information circle or warning triangle, one per message state. */
+function MessageIcon({ kind }: { kind: SuggestionMessage["kind"] }) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 20 20"
+      className="size-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {kind === "applied" && <path d="M4 10.5l4 4 8-9" />}
+      {kind === "met" && (
+        <>
+          <circle cx="10" cy="10" r="8" />
+          <path d="M10 9v5M10 6h.01" />
+        </>
+      )}
+      {kind === "impossible" && (
+        <>
+          <path d="M10 3L2 17h16L10 3z" />
+          <path d="M10 8v4M10 14.5h.01" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+// From lg this section spans the two columns and four rows of the Actions grid
 // and inherits them with subgrid, so the label and the select sit in column
 // 2, Suggest spans both columns and the DOM order stays Swap, select, Suggest.
 export function SuggestPanel({
@@ -21,7 +57,7 @@ export function SuggestPanel({
   return (
     <section
       aria-labelledby="suggest-heading"
-      className="flex flex-col gap-2 lg:col-span-2 lg:col-start-1 lg:row-span-5 lg:row-start-1 lg:grid lg:grid-cols-subgrid lg:grid-rows-subgrid"
+      className="flex flex-col gap-2 lg:col-span-2 lg:col-start-1 lg:row-span-4 lg:row-start-1 lg:grid lg:grid-cols-subgrid lg:grid-rows-subgrid"
     >
       <h2 id="suggest-heading" className="sr-only">
         Suggestion
@@ -31,15 +67,32 @@ export function SuggestPanel({
           <label htmlFor="target" className="block text-xs/4 text-ink-muted">
             Target level
           </label>
-          <select
-            id="target"
-            value={target}
-            onChange={(e) => onTargetChange(e.target.value as SuggestionTarget)}
-            className="mt-2 h-12 w-full rounded-xs border border-line bg-transparent px-4 text-sm/6 text-ink md:w-auto lg:mt-0 lg:h-10 lg:w-full"
-          >
-            <option value="AA">AA normal text (4.5:1)</option>
-            <option value="AAA">AAA normal text (7:1)</option>
-          </select>
+          <div className="relative mt-2 lg:mt-0">
+            <select
+              id="target"
+              value={target}
+              onChange={(e) =>
+                onTargetChange(e.target.value as SuggestionTarget)
+              }
+              className="block h-12 w-full appearance-none rounded-xs border border-line bg-transparent pr-10 pl-4 text-sm/6 text-ink forced-colors:appearance-auto md:w-auto lg:h-10 lg:w-full"
+            >
+              <option value="AA">AA normal text (4.5:1)</option>
+              <option value="AAA">AAA normal text (7:1)</option>
+            </select>
+            <svg
+              aria-hidden="true"
+              focusable="false"
+              viewBox="0 0 16 16"
+              className="pointer-events-none absolute inset-y-0 right-4 my-auto size-4 forced-colors:hidden"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 6l4 4 4-4" />
+            </svg>
+          </div>
         </div>
         <button
           type="button"
@@ -50,15 +103,21 @@ export function SuggestPanel({
           Suggest accessible text color
         </button>
       </div>
-      <p className="text-xs/4 text-ink-muted lg:col-span-2 lg:row-start-4">
-        Changes only the lightness of your text color.
-      </p>
-      <p
-        aria-live="polite"
-        className="min-h-4 text-xs/4 text-ink-muted lg:col-span-2 lg:row-start-5"
-      >
-        {message}
-      </p>
+      <div className="lg:col-span-2 lg:row-start-4">
+        <div aria-live="polite">
+          {message && (
+            <p className="mb-2 flex gap-2 text-sm/6 text-ink">
+              <span className="flex h-6 shrink-0 items-center">
+                <MessageIcon kind={message.kind} />
+              </span>
+              {message.text}
+            </p>
+          )}
+        </div>
+        <p className="text-xs/4 text-ink-muted">
+          Changes only the lightness of your text color.
+        </p>
+      </div>
     </section>
   );
 }

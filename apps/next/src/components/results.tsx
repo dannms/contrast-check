@@ -1,11 +1,18 @@
-import { type Evaluation, formatRatio, summarize } from "@contrast-check/core";
+import {
+  type Evaluation,
+  formatRatio,
+  summarize,
+  verdict,
+} from "@contrast-check/core";
 import { StatusBadge } from "./status-badge";
+
+const EMPTY_MESSAGE = "Enter two valid hex colors to see the contrast ratio.";
 
 type ResultsProps = {
   evaluation: Evaluation | null;
 };
 
-/** The ratio as the focal point, a one-sentence live summary and the criteria table. */
+/** The ratio as the focal point, a one-sentence verdict, a hidden live summary and the criteria table. */
 export function Results({ evaluation }: ResultsProps) {
   const [ratioValue = ""] = evaluation
     ? formatRatio(evaluation.ratio).split(":")
@@ -34,15 +41,16 @@ export function Results({ evaluation }: ResultsProps) {
             </p>
           </>
         )}
+        <p className="mt-4 max-w-md text-sm/6 text-ink">
+          {evaluation ? verdict(evaluation) : EMPTY_MESSAGE}
+        </p>
         <p
           data-testid="live-summary"
           aria-live="polite"
           aria-atomic="true"
-          className="mt-4 max-w-md text-sm/6 text-ink-muted"
+          className="sr-only"
         >
-          {evaluation
-            ? summarize(evaluation)
-            : "Enter two valid hex colors to see the contrast ratio."}
+          {evaluation ? summarize(evaluation) : EMPTY_MESSAGE}
         </p>
       </div>
       {evaluation && (
