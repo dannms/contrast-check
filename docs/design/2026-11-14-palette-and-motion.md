@@ -103,7 +103,7 @@ Library for motion: **GSAP (chosen)** over Motion (motion.dev). GSAP is framewor
 
 ### 5.5 Export
 
-- `toTailwindTheme(palette, level)` returns a Tailwind v4 CSS string:
+- `toTailwindTheme(palette, options)` returns a Tailwind v4 CSS string:
   - an `@theme { ... }` block with `--color-<role>-<step>: oklch(L C H);` for the five roles and 11 steps;
   - semantic aliases `--color-text`, `--color-background`, `--color-primary`, `--color-secondary`, `--color-accent` pointing to the anchored step of each role;
   - a trailing comment on each alias for the pair that applies to its role, with ratios from `checkPalette` to 2 decimals: text `<ratio>:1 on background`; background `surface` (no ratio, it is the surface the others sit on); primary `label <ratio>:1, <ratio>:1 vs background` (label on primary, then primary against background); secondary `label <ratio>:1` (secondary is a surface, so only its label is checked); accent `<ratio>:1 on background`;
@@ -124,12 +124,14 @@ Library for motion: **GSAP (chosen)** over Motion (motion.dev). GSAP is framewor
 1. Header: "Contrast Check", "WCAG 2.2".
 2. Palette fields: five role groups (label, hex input, circular swatch picker), then actions: Swap text/background, Level (AA/AAA), "Accent as text" switch.
 3. Palette verdict line.
-4. Pairs table: one row per pair (name, ratio, minimum, result icon plus word, Fix button on failing rows). Activating a row (click, or Enter/Space on the row's button) puts it "in focus".
-5. Focus pair: the large ratio (existing typographic treatment) and `verdict()` sentence for the pair in focus. Default focus: `text-on-background`.
+4. Focus pair: the large ratio (existing typographic treatment) and `verdict()` sentence for the pair in focus. Default focus: `text-on-background`.
+5. Pairs table: one row per pair (name, ratio, minimum, result icon plus word, Fix button on failing rows). Activating a row (click, or Enter/Space on the row's button) puts it "in focus".
 6. Scales: five strips of 11 steps (the Scale homage), each step showing its name, and its annotation as icon plus short text; selecting a step sets that role to it.
 7. Preview: sample interface in exact colors (heading, paragraph, primary button, secondary button, link in accent, accent chip), directly on the surface.
 8. Export: the `@theme` block in a code region with "Copy" (and the copy confirmation).
 9. Footer.
+
+The order follows the layout approved in the mockup: the pair in focus with its ratio on the left, the pairs table on the right.
 
 The exact visual layout is decided in the mockup phase (Phase 2) and recorded in `DESIGN.md` before any UI code.
 

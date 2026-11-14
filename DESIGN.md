@@ -4,9 +4,9 @@ Source of truth for the visual design. Values are normative.
 
 ## 1. Concept
 
-- **Surface**: the page takes the background color the person chose.
-- **Specimen**: the Preview section uses the raw text color the person chose, unadjusted. It is what is being tested and may fail.
-- **Chrome**: everything else (text, labels, borders, focus, buttons) uses a theme derived from the chosen text color by the suggestion algorithm of the core, so it stays readable for any pair. See Theme.
+- **Roles**: the person chooses five colors: text, background, primary, secondary and accent. The surface is the active background.
+- **Preview**: the Preview section uses the exact colors the person chose, unadjusted. It is what is being tested and may fail, so it is exempt from the contrast goals.
+- **Chrome**: everything else (text, labels, borders, focus, buttons) uses a theme derived from text and background by `deriveTheme`, so it stays readable for any palette. See Theme.
 
 Direction: minimalism in the style of Scale (hihayk.github.io/scale) combined with the idea of Realtime Colors, where the page is the preview. Mobile-first. One monospaced family. No cards, no shadows, no gradients, no glassmorphism. 1px dividers, 2px radius on controls, a circular color swatch.
 
@@ -21,9 +21,9 @@ Computed by `deriveTheme` in `packages/core` and exposed as CSS custom propertie
 | `--cc-ink-muted` | Ink mixed toward the surface as far as possible while keeping at least 4.5:1. When ink is already close to 4.5:1 it can equal ink. Labels and secondary text.                                                                   |
 | `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                                        |
 | `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                                           |
-| `--cc-tint`      | Ink mixed 90% toward the surface. Used only for the 200ms highlight of the Text input when a suggestion is applied. Not a button fill: near the AA limit it is almost the surface color.                                        |
 
-- Why ink keeps the exact color: pairs that pass AA appear exactly as chosen, as in Realtime Colors. Only failing pairs get an adjusted tone in the interface, and the specimen always shows the exact color.
+- Filled chrome buttons (Fix, Copy): background primary and text in the label color of the primary (`labelColorFor`) when the `label-on-primary` pair passes AA. Otherwise background `--cc-ink` and text `--cc-surface`.
+- Why ink keeps the exact color: pairs that pass AA appear exactly as chosen, as in Realtime Colors. Only failing pairs get an adjusted tone in the interface, and the Preview always shows the exact colors.
 - Focus ring: `outline-2 outline-offset-2 outline-ink` (2px, ink color, 2px offset).
 - While an input holds an invalid hex, the theme keeps the last valid pair, so nothing flashes.
 - The theme is computed on the server from the URL state, so the first paint is already themed.
@@ -31,89 +31,111 @@ Computed by `deriveTheme` in `packages/core` and exposed as CSS custom propertie
 
 ## 3. Scale rules
 
-- **Standard scales only.** Spacing, type, containers, line-heights and radii are the default Tailwind scales, written as utility classes. No arbitrary values in square brackets, no `clamp()`, no loose `px` in CSS and no custom size tokens. Allowed exceptions: 1px borders, the 2px focus outline, `rounded-xs`, the existing color, font family and easing tokens, and one named utility, `grid-cols-actions` (`grid-template-columns: auto minmax(0, 1fr)`, defined in `tokens.css`), because no standard class expresses an auto-sized column next to a flexible one.
-- **8px grid.** Spacing, control sizes and line-heights are multiples of 8px (even Tailwind steps: 2, 4, 6, 8, 10, 12, 16 and so on; one step is 4px). Font sizes follow the Tailwind scale and each text sets its line-height on the grid (`text-xs/4`, `text-sm/6`, `text-base/6`, `text-2xl/8`, `text-4xl/10`, `text-5xl/12`, or `leading-none` for the display sizes).
-- **Mobile-first variants, never formulas.** Layout changes through `md` (768px) and `lg` (1024px); `xl` (1280px) is used only to step the hex input up to `text-5xl`. For tall screens there is a custom variant in `tokens.css`: `@custom-variant tall (@media (min-height: 50rem));` (screens at least 800px high). It is combined with `lg` (`lg:tall:`) to give the ratio its largest size only where it still fits above the fold.
+- **Standard scales only.** Spacing, type, containers, line-heights and radii are the default Tailwind scales, written as utility classes. No arbitrary values in square brackets, no `clamp()`, no loose `px` in CSS and no custom size tokens. Allowed exceptions: 1px borders, the 2px focus outline, `rounded-xs`, the existing color, font family and easing tokens, and one named utility, `grid-cols-scale` (`grid-template-columns: 6rem minmax(0, 1fr)`, 96px for the strip label and the rest for the steps, defined in `tokens.css`), because no standard class expresses a fixed column next to a flexible one. `grid-cols-actions` is retired with the Suggest layout.
+- **8px grid.** Spacing, control sizes and line-heights are multiples of 8px (even Tailwind steps: 2, 4, 6, 8, 10, 12, 16 and so on; one step is 4px). Font sizes follow the Tailwind scale and each text sets its line-height on the grid (`text-xs/4`, `text-sm/6`, `text-base/6`, `text-4xl/10`, or `leading-none` for the display sizes).
+- **Mobile-first variants, never formulas.** Layout changes through `md` (768px) and `lg` (1024px). For tall screens there is a custom variant in `tokens.css`: `@custom-variant tall (@media (min-height: 50rem));` (screens at least 800px high). It is combined with `lg` (`lg:tall:`) to give the ratio its largest size only where it still fits above the fold.
 
 ## 4. Typography
 
 DM Mono only: `font-light` (300), `font-normal` (400) and `font-medium` (500), self-hosted (no Google Fonts CDN).
 
-| Element                                                           | Classes                                                                                                                                                                                            |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Labels, table headers, notes, "WCAG 2.2", footer                  | `text-xs/4` (12px / 16px), muted                                                                                                                                                                   |
-| UI text: buttons, select, table rows, verdict, suggestion message | `text-sm/6` (14px / 24px)                                                                                                                                                                          |
-| h1 "Contrast Check"                                               | `text-sm/6 font-medium`                                                                                                                                                                            |
-| Hex inputs                                                        | `text-4xl xl:text-5xl font-light leading-none` (36px, then 48px from xl)                                                                                                                           |
-| Ratio                                                             | `text-7xl md:text-8xl lg:tall:text-9xl font-light leading-none tracking-tighter whitespace-nowrap` (72px, 96px, 128px). The ":1" is `text-3xl md:text-4xl lg:tall:text-5xl tracking-normal`, muted |
-| Specimen, large                                                   | `text-4xl/10 md:text-5xl/12 font-light tracking-tight`                                                                                                                                             |
-| Specimen, medium                                                  | `text-2xl/8 font-medium`                                                                                                                                                                           |
-| Specimen, body                                                    | `text-base/6 max-w-prose`                                                                                                                                                                          |
+| Element                                                        | Classes                                                                                                                                                                                            |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Labels, table headers, notes, "WCAG 2.2", footer               | `text-xs/4` (12px / 16px), muted                                                                                                                                                                   |
+| UI text: buttons, select, table rows, verdicts, status message | `text-sm/6` (14px / 24px)                                                                                                                                                                          |
+| h1 "Contrast Check"                                            | `text-sm/6 font-medium`                                                                                                                                                                            |
+| Hex inputs                                                     | `text-4xl lg:text-3xl font-light leading-none` (36px; 30px from `lg`, where the five fields sit side by side)                                                                                      |
+| Ratio                                                          | `text-7xl md:text-8xl lg:tall:text-9xl font-light leading-none tracking-tighter whitespace-nowrap` (72px, 96px, 128px). The ":1" is `text-3xl md:text-4xl lg:tall:text-5xl tracking-normal`, muted |
+| Preview, title                                                 | `text-4xl/10 font-light tracking-tight`                                                                                                                                                            |
+| Preview, body                                                  | `text-base/6 max-w-prose`                                                                                                                                                                          |
+| Preview, panel title                                           | `text-base/6 font-medium`                                                                                                                                                                          |
 
 ## 5. Layout
 
-Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints.
+Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sections below are in DOM order, which is the visual order and the focus order (WCAG 2.4.3). The order does not change across breakpoints.
 
-- **Container**: `max-w-6xl mx-auto px-4 md:px-8 lg:px-12 pt-6 md:pt-8 pb-12`. The root element covers the viewport (`min-h-dvh`) with the surface color.
-- **Header**: h1 on the left, "WCAG 2.2" (`text-xs/4`, muted) on the right.
-- **Top row**: `mt-8 md:mt-10`, three groups: Text, Background, Actions.
-  - Mobile: groups stacked, each separated by a 1px hairline top border and `py-6`. The first group has no border and no top padding.
-  - From `md`: three columns with a gap (`md:gap-x-8`, `lg:gap-x-12`) and a 1px hairline divider centered in each gap, drawn as a `before:` pseudo-element, so both sides of every divider have the same space (16px from `md`, 24px from `lg`). There is no padding on the outer edges: the first column starts at the container's left edge and the last one ends exactly at its right edge, the same axis as "WCAG 2.2" and the criteria table.
-  - Text and Background are always the same width. At `md` the three columns are equal (the Colors fieldset is an explicit two-column grid; a subgrid on the fieldset was not applied). From `lg` the row is a flex row: the Colors fieldset takes the free space (`flex-1`, two equal columns) and the Actions group has a fixed `lg:w-96` (384px), enough for Swap and the select side by side.
-  - Columns align to the top; each divider is as tall as its own column.
-- **Color group**: label (`text-xs/4`, muted), then, `mt-2` below it, a row with the hex input and a `size-12` circular color swatch (native color input, 1px line border). The row never wraps.
-  - The hex input takes the width the column leaves (`flex-1 min-w-0`) and the swatch sits at the end of the row, flush with the column's edge, at every width. Text and Background therefore have underlines of the same length, and each swatch is the same distance from the divider on its right. The gap between input and swatch is `gap-4` (`md:gap-2` at `md`, where the columns are narrowest).
-  - Input: `size="7"`, transparent background, no border except a 1px bottom border in `--cc-line`, `pb-2`, `text-4xl xl:text-5xl` (36px up to `lg`, 48px from `xl`, so the line fits at 1024px).
-  - The hint ("Hex, like #1A2B3C or #ABC") stays in the DOM and tied to the input by `aria-describedby`, but is visually hidden. Error text is `text-xs/4`, ink, visible.
-- **Actions group**: contains, in this order in the DOM and on screen: the Swap colors button, the Target level select and the Suggest accessible text color button, then the suggestion message (live), then the note "Changes only the lightness of your text color." (`text-xs/4`, muted). Visual order and focus order are the same (WCAG 2.4.3).
-  - Visible group label "Actions" (`text-xs/4`, muted), decorative (`aria-hidden`), aligned with the "Text" and "Background" labels. The suggestion section keeps its h2 "Suggestion", visually hidden.
-  - Mobile: the three controls stacked at full width, `gap-2`.
-  - From `lg` the group is `lg:grid lg:w-96 lg:flex-none lg:grid-cols-actions lg:gap-2`. `grid-cols-actions` is the named utility from `tokens.css`: column 1 is as wide as Swap and column 2 takes the rest.
-    - Row 1, labels: "Actions" (decorative, `aria-hidden`) over column 1 and "Target level" over column 2.
-    - Row 2, controls: Swap in column 1, with the width of its content, and the select in column 2, filling it up to the right edge; both `lg:h-10`, aligned to the top.
-    - Row 3: Suggest across both columns. Row 4: the message and the note.
-    - The Suggestion section spans both columns and the four rows and inherits the tracks with `grid-cols-subgrid` and `grid-rows-subgrid`. Its controls row and the select wrapper subgrid in turn, so the label and the select land in the grid cells above. There is no `display: contents` anywhere, so the landmark region and the focus order do not depend on browser quirks.
-    - The section box covers the Swap cell, so Swap has `lg:relative lg:z-10` to stay clickable.
-    - DOM order and focus order stay Swap, select, Suggest.
-  - The Swap button sits outside the "Colors" fieldset, right after it in the DOM. The fieldset contains only the Text and Background groups.
-  - Suggestion message: `text-sm/6`, ink, with a `size-4` inline SVG icon (`aria-hidden`) before the text, in a `gap-2` row. One icon per state: a check (suggestion applied), an information circle (the text color already meets the target) and a warning triangle (impossible with this hue). The message text does not change. It sits right below Suggest and above the note, inside the `aria-live="polite"` region; with no message the region is empty, with no icon and no reserved space.
-- **Buttons and select**: `h-12 lg:h-10 px-4 text-sm/6 rounded-xs`. The select and the Swap colors button are transparent with a 1px `--cc-line` border and ink text (outline). Suggest accessible text color is the primary action: filled with `--cc-ink`, text in `--cc-surface`, no border (the contrast is the ink/surface pair itself, always at least 4.5:1). Hover (only in `(hover: hover) and (pointer: fine)`): the border of the select and of Swap becomes `--cc-ink`; Suggest does not change color (cursor only). Focus and `:active` are unchanged.
-  - Select: `appearance-none pr-10` with its own chevron (inline SVG, `aria-hidden`, `pointer-events-none`, `size-4`, `currentColor`) at `right-4`, vertically centered, inside a `relative` wrapper. In forced-colors mode the select goes back to its native look (`forced-colors:appearance-auto`) and the SVG is hidden (`forced-colors:hidden`), so the native arrow does not disappear.
-- **Results**: `mt-10 md:mt-12 pt-8`, 1px hairline top border.
-  - Mobile: stacked, `gap-y-8`. From `md`: a two-column grid, `gap-x-16 gap-y-8`: the ratio block and the criteria table.
-  - Ratio block: `text-xs/4` muted label "Contrast ratio", the ratio (`mt-2`), then the visible verdict (`mt-4 max-w-md text-sm/6`, ink, no `aria-live`): one sentence from `verdict()` in the core. "Passes AAA for all text." (ratio 7 or more), "Passes AA. AAA needs 7:1." (4.5 to 7), "Large text and UI only. Normal text needs 4.5:1." (3 to 4.5) or "Fails every criterion. Normal text needs 4.5:1." (below 3). The full `summarize()` sentence stays in a visually hidden (`sr-only`) `aria-live="polite"` region with `data-testid="live-summary"`. With invalid colors the verdict slot shows "Enter two valid hex colors to see the contrast ratio."
-- **Criteria table**: `text-sm/6`. Header row `text-xs/4` muted with `pb-2`. Rows with a 1px hairline top border and `py-2`. The result is a `size-4` icon plus "Pass" or "Fail" at `font-medium`, in the same ink color for both (never color alone).
-- **Preview**: `mt-12 md:mt-16 pt-8`, 1px hairline top border. Label "Preview" plus "your text color, unaltered" (`text-xs/4`, muted). Specimen lines in the raw text color, `mt-6` below, directly on the surface, no frame. The 24px line reads "Large text, 24px." (DM Mono has no 700 weight, and 24px already counts as large text in WCAG at any weight).
-- **Footer**: `mt-16`, `text-xs/4` muted: Contrast Check, Next.js, Nuxt, GitHub. Links underlined, `underline-offset-4`.
+1. **Container**: `max-w-7xl mx-auto px-4 md:px-8 lg:px-12 pt-6 md:pt-8 pb-12`. The root element covers the viewport (`min-h-dvh`) with the surface color.
+2. **Header**: h1 "Contrast Check" on the left, "WCAG 2.2" (`text-xs/4`, muted) on the right.
+3. **Palette**: a `fieldset` with a visually hidden `legend` "Palette" and five groups: Text, Background, Primary, Secondary, Accent.
+   - Up to `lg`: stacked, each with a 1px hairline top border and `py-4`. The first has no border and no top padding.
+   - From `lg`: `grid-cols-5 gap-x-8`, with a 1px hairline divider centered in each gap, drawn as a `before:` pseudo-element.
+   - Each group: label (`text-xs/4`, muted); `mt-2`, a row with the hex input and a circular swatch (native color input, 1px line border), `gap-4`. The swatch is `size-12 lg:size-10`.
+   - Input: `flex-1 min-w-0`, transparent background, no border except a 1px underline in `--cc-line`, `pb-2`, with the muted "#" inside the underline. The hint ("Hex, like #1A2B3C or #ABC") stays in the DOM, visually hidden.
+   - Error line, always present: `mt-2 min-h-4 text-xs/4`, empty while the hex is valid. The input points to it and to the hint with `aria-describedby`. It never changes the height of the group.
+4. **Actions**: `mt-6`. Mobile: stacked, full width, `gap-2`. From `md`: `flex flex-wrap items-center gap-x-6 gap-y-2`. All controls are `h-12 lg:h-10`.
+   - Swap text and background: outline button.
+   - Level: a visible label "Level" (`text-xs/4`, muted) beside the select AA/AAA (`md:w-32`) with the chevron described below.
+   - Accent as text: a `button` with `role="switch"` and `aria-checked`. Track `w-8 h-4` with a 1px `--cc-line` border and a knob in ink. On: track in ink, knob in surface, moved 16px.
+   - The Suggest button and the note "Changes only the lightness…" are gone. The Fix button of each pair replaces Suggest.
+5. **Results**: `mt-8 pt-8`, 1px hairline top border. Mobile: stacked, `gap-y-8`. From `lg`: `grid-cols-5 gap-x-16`; the pair in focus takes `col-span-2` on the left and the table takes `col-span-3` on the right.
+   - **Pair in focus** (first in the DOM): label "In focus · <pair name>" (`text-xs/4`, muted); the ratio (`mt-2`); the `verdict()` sentence (`mt-4 max-w-md text-sm/6`); the message (`mt-2 min-h-12 text-sm/6`, `aria-live="polite"`).
+   - The message space is always reserved (two 24px lines), so a message never shifts the layout. Texts: "<Role> set to #HEX.", "Can't fix without breaking <pair> and N more." ("and N more" only when more than one pair would break), "Theme copied.", "Copy failed. Select the code and copy it."
+   - **Pairs table** (after it in the DOM): first the palette verdict (`text-sm/6 font-medium`), "Passes AA · 6 of 6 pairs" or "Fails AA · 3 of 6 pairs fail"; then, `mt-4`, a `<table>` with a visually hidden caption "Palette pairs at <level>".
+   - Columns: Pair; Ratio and Minimum (both from `md`); Result (`size-4` icon plus Pass or Fail at `font-medium`, same color for both, never color alone); Fix (header visually hidden).
+   - Rows: `h-12 lg:h-10`, 1px hairline top border.
+   - The pair name is a full-width button with `aria-pressed` that puts the pair in focus. The pair in focus is `font-medium` and underlined (`underline-offset-4`).
+   - Below `md` the pair button has a second line, `text-xs/4` muted: "5.56:1 · min 4.5:1".
+   - Fix: a filled button only on failing rows, with the accessible name "Fix <pair name in lowercase>", with "vs" replaced by "against" (for example "Fix accent against background").
+6. **Scales**: `mt-10 pt-8`, 1px hairline top border; label "Scales · 11 steps from each seed, in OKLCH". Then, `mt-6`, five strips with `gap-y-6`.
+   - From `lg` each strip is `grid-cols-scale gap-x-6`: the label on the left, the steps on the right.
+   - Steps: `grid-cols-6 gap-x-1 gap-y-2` on mobile (6 + 5); `md:grid-cols-11 md:gap-1`.
+   - Each step is a `role="radio"` inside a `role="radiogroup"` named after the strip, with roving tabindex, arrow keys, Home and End. Selection follows focus.
+   - A step shows: a block `h-12 rounded-xs` with a 1px hairline border in the step's own color; the name (`mt-2 text-xs/4`); the use (`text-xs/4`, muted) with a `size-3` icon and text: check and "AAA" (7 or more), check and "AA" (4.5 or more), square and "Large · UI" (3 or more), dash and "Decor" (below 3).
+   - The accessible name carries step, hex, ratio and use.
+   - The active step: `outline-2 outline-offset-2` in ink, and its name in `font-medium`.
+   - The background strip is annotated against the active text color; the other strips against the active background.
+7. **Preview and Export**: from `lg`, `grid grid-cols-2 gap-x-16 items-start` with the two sections side by side, Preview on the left. Below `lg`, stacked in that order. Each section: `mt-10 pt-8`, 1px hairline top border.
+   - **Preview**: label "Preview · your colors, unaltered"; then, `mt-6`, a settings screen in the exact colors, with `gap-6`:
+     - the title "Notification settings" (`text-4xl/10 font-light tracking-tight`) and a paragraph (`text-base/6 max-w-prose`), both in the text color;
+     - a panel with the secondary as background and the label color of the secondary as text, `p-6 rounded-xs max-w-xl`, no border: the title "Email updates" (`text-base/6 font-medium`) and two drawn fields (a label and a box `h-10 px-3` with a 1px border in `currentColor`; from `md`, the label is `w-40` beside the box);
+     - below the panel, on the background: "Save changes" (primary, with its label color, `h-10 px-4`) and "Cancel" (outline in the text color);
+     - on a row below, the chip "New" (`h-8 px-3`, border and text in accent) and the drawn link "Read what changed" (`text-base/6`, accent, underlined).
+   - The buttons and the link sit outside the panel because the core does not check primary or accent on secondary.
+   - Nothing in the Preview takes focus, and axe keeps excluding it.
+   - The Preview answers to the pair in focus: the part that uses that pair gets `outline-2 outline-dashed outline-offset-4` in ink.
+     - `text-on-background`: the title and the paragraph.
+     - `label-on-secondary`: the panel.
+     - `label-on-primary` and `primary-vs-background`: Save changes.
+     - `accent-vs-background`: the chip.
+     - `accent-as-text`: the link.
+   - **Export**: a row with the label "Export · Tailwind CSS v4 theme" and the filled Copy button; then, `mt-4`, a `<pre>` with `tabindex="0"` and `aria-label="Tailwind theme"`, `max-h-96 overflow-auto p-4`, 1px border in `--cc-line`, `rounded-xs`, `text-xs/4`. Horizontal scrolling on long lines is expected.
+8. **Footer**: `mt-16`, `text-xs/4` muted: Contrast Check, Next.js, Nuxt, GitHub. Links underlined, `underline-offset-4`.
+
+### Ratio and controls
+
+- **Ratio**: `text-7xl md:text-8xl lg:tall:text-9xl font-light leading-none tracking-tighter whitespace-nowrap`; the ":1" is `text-3xl md:text-4xl lg:tall:text-5xl tracking-normal`, muted.
+- **Buttons and select**: `h-12 lg:h-10 px-4 text-sm/6 rounded-xs`. The select and Swap are transparent with a 1px `--cc-line` border and ink text (outline). Filled buttons (Fix, Copy) follow the Theme rule and have no border. Hover (only in `(hover: hover) and (pointer: fine)`): the border of the select and of Swap becomes `--cc-ink`; filled buttons do not change color (cursor only).
+  - Select: `appearance-none pr-10` with its own chevron (inline SVG, `aria-hidden`, `pointer-events-none`, `size-4`, `currentColor`) at `right-4`, vertically centered, inside a `relative` wrapper. In forced-colors mode the select goes back to its native look (`forced-colors:appearance-auto`) and the SVG is hidden (`forced-colors:hidden`).
 
 ## 6. Motion
 
 - No transition on theme or color changes: they follow typing and picker drags.
 - Buttons scale down on `:active` (`active:scale-97`) with `transition-transform duration-150 ease-press`, where `ease-press` is the token `cubic-bezier(0.23, 1, 0.32, 1)`.
-- When a suggestion is applied, the Text input background starts at `--cc-tint` and fades to transparent in 200ms (`animate-flash`, with the same easing token).
+- The Accent as text switch moves with `transition-transform duration-150 ease-press`.
 - Hover styles only inside `@media (hover: hover) and (pointer: fine)`.
-- `prefers-reduced-motion`: no transforms, transitions or animations (`motion-reduce:` variants plus a global rule).
+- `prefers-reduced-motion`: no transforms, transitions or animations (`motion-reduce:` variants plus a global rule); this includes the switch.
 
 ## 7. UX decisions
 
 - The ratio is the single focal point (Von Restorff): it must be the one thing that stands out.
-- Only two actions, Swap and Suggest (Hick): fewer choices, faster decisions.
+- The global actions are Swap, Level and Accent as text; correction is per pair (Fix only on failing rows) (Hick): fewer choices, faster decisions.
 - Every target is `h-12` (48px) on touch layouts and `lg:h-10` (40px) from `lg`, where a pointer is expected (Fitts): easy to hit on a phone.
 - Results are instant, with no submit button (Doherty): feedback keeps pace with typing.
 - Hex is accepted with or without `#`, with spaces and in any case (Postel): be liberal in what is accepted.
 - Spacing groups before lines (proximity): related controls sit together without boxes.
 - Standard form controls with custom styling (Jakob): inputs, selects and the color picker behave as people expect.
+- Messages and errors have reserved space, so nothing shifts the layout when they appear.
 - The DOM order of focusable elements does not change across breakpoints: keyboard order matches the visual order.
 
 ## 8. Accessibility floors
 
 - Chrome text at least 4.5:1.
 - Control boundaries at least 3:1.
-- The specimen is exempt by design: it is the thing being tested.
-- Existing labels, ids, aria attributes, headings and `data-testid` values are a contract with the E2E suite and must not change.
+- The Preview is exempt by design: it is the thing being tested.
+- Phase 3 rewrites the E2E suite for this interface (design, section 6.3); the new ids and `data-testid` values defined there become the contract.
 
 ## 9. Out of scope
 
 - Illustrations or animated figures.
 - A dark/light toggle.
-- Extra actions.
+- Extra global actions.
