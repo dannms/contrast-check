@@ -18,17 +18,17 @@ export function ThemeExport({ exportText, onCopy }: Props) {
           Copy
         </button>
       </div>
-      {/* biome-ignore lint/a11y/useSemanticElements: a <pre> keeps the code formatting and needs the region role to carry its name */}
-      <pre
+      <section
         // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable code region must be reachable by keyboard
         tabIndex={0}
-        role="region"
         aria-label="Tailwind theme"
         data-testid="export-code"
         className="mt-4 max-h-96 overflow-auto rounded-xs border border-line p-4 text-xs/4"
       >
-        <code>{exportText}</code>
-      </pre>
+        <pre>
+          <code>{exportText}</code>
+        </pre>
+      </section>
     </section>
   );
 }
