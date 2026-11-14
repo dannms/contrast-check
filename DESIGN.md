@@ -60,7 +60,7 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - Up to `lg`: stacked, each with a 1px hairline top border and `py-4`. The first has no border and no top padding.
    - From `lg`: `grid-cols-5 gap-x-8`, with a 1px hairline divider centered in each gap, drawn as a `before:` pseudo-element.
    - Each group: label (`text-xs/4`, muted); `mt-2`, a row with the hex input and a circular swatch (native color input, 1px line border), `gap-4`. The swatch is `size-12 lg:size-10`.
-   - Input: `flex-1 min-w-0`, transparent background, no border except a 1px underline in `--cc-line`, `pb-2`, with the muted "#" inside the underline. The hint ("Hex, like #1A2B3C or #ABC") stays in the DOM, visually hidden.
+   - Input: `flex-1 min-w-0`, transparent background, no border except a 1px underline in `--cc-line`, `pb-2`. The input holds its own "#": its value is the draft (for example "#1C1D22"), and there is no decorative "#" beside it. The hint ("Hex, like #1A2B3C or #ABC") stays in the DOM, visually hidden.
    - Error line, always present: `mt-2 min-h-4 text-xs/4`, empty while the hex is valid. The input points to it and to the hint with `aria-describedby`. It never changes the height of the group.
 4. **Actions**: `mt-6`. Mobile: stacked, full width, `gap-2`. From `md`: `flex flex-wrap items-center gap-x-6 gap-y-2`. All controls are `h-12 lg:h-10`.
    - Swap text and background: outline button.
@@ -72,7 +72,7 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - **Live summary**: a visually hidden (`sr-only`) region with `aria-live="polite"`, outside the two blocks and right after the Results section in the DOM. It announces the state in short text: "<pair in focus name>, <ratio> to 1. <palette verdict>." (for example "Text on background, 16.09 to 1. Passes AA · 6 of 6 pairs."). It updates when any color, the level, the Accent as text switch or the pair in focus changes. With an invalid hex, the announcement keeps the last valid pair, like the theme.
    - The visible message (`min-h-12`) keeps its own `aria-live`: it announces the result of an action (Fix, Copy); the hidden region announces the state.
    - The four texts of `verdict()` are defined in the core (`packages/core`, function `verdict`) and are not repeated here.
-   - The message space is always reserved (two 24px lines), so a message never shifts the layout. Texts: "<Role> set to #HEX.", "Can't fix without breaking <pair> and N more." ("and N more" only when more than one pair would break), "Theme copied.", "Copy failed. Select the code and copy it."
+   - The message space is always reserved (two 24px lines), so a message never shifts the layout. Texts: "<Role> set to #HEX.", "Can't fix without breaking <pair> and N more." ("and N more" only when more than one pair would break), "Can't fix this pair with this color." (when no tone reaches the minimum), "Theme copied.", "Copy failed. Select the code and copy it."
    - **Pairs table** (after it in the DOM): first the palette verdict (`text-sm/6 font-medium`), "Passes AA · 6 of 6 pairs" or "Fails AA · 3 of 6 pairs fail"; then, `mt-4`, a `<table>` with a visually hidden caption "Palette pairs at <level>".
    - Columns: Pair; Ratio and Minimum (both from `md`); Result (`size-4` icon plus Pass or Fail at `font-medium`, same color for both, never color alone); Fix (header visually hidden).
    - Rows: `h-12 lg:h-10`, 1px hairline top border.
@@ -84,7 +84,7 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - Steps: `grid-cols-6 gap-x-1 gap-y-2` on mobile (6 + 5); `md:grid-cols-11 md:gap-1`.
    - Each step is a `role="radio"` inside a `role="radiogroup"` named after the strip, with roving tabindex, arrow keys, Home and End. Selection follows focus.
    - A step shows: a block `h-12 rounded-xs` with a 1px hairline border in the step's own color; the name (`mt-2 text-xs/4`); the use (`text-xs/4`, muted) with a `size-3` icon and text: check and "AAA" (7 or more), check and "AA" (4.5 or more), square and "Large · UI" (3 or more), dash and "Decor" (below 3).
-   - The accessible name carries step, hex, ratio and use.
+   - The accessible name is "<step>, <hex>, <ratio>, <use>" with the use spelled out: "AAA text", "AA text", "large text and UI" or "decorative" (for example "600, #2F5BD8, 5.56:1, AA text"). The visible use stays "AAA", "AA", "Large · UI", "Decor".
    - The active step: `outline-2 outline-offset-2` in ink, and its name in `font-medium`.
    - The background strip is annotated against the active text color; the other strips against the active background.
 7. **Preview and Export**: from `lg`, `grid grid-cols-2 gap-x-16 items-start` with the two sections side by side, Preview on the left. Below `lg`, stacked in that order. Each section: `mt-10 pt-8`, 1px hairline top border.
