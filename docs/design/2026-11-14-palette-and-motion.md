@@ -106,7 +106,9 @@ Library for motion: **GSAP (chosen)** over Motion (motion.dev). GSAP is framewor
 - `toTailwindTheme(palette, level)` returns a Tailwind v4 CSS string:
   - an `@theme { ... }` block with `--color-<role>-<step>: oklch(L C H);` for the five roles and 11 steps;
   - semantic aliases `--color-text`, `--color-background`, `--color-primary`, `--color-secondary`, `--color-accent` pointing to the anchored step of each role;
-  - a header comment with the palette verdict and level, and a trailing comment per anchored step with its ratio against the background.
+  - a trailing comment on each alias for the pair that applies to its role, with ratios from `checkPalette` to 2 decimals: text `<ratio>:1 on background`; background `surface` (no ratio, it is the surface the others sit on); primary `label <ratio>:1, <ratio>:1 vs background` (label on primary, then primary against background); secondary `label <ratio>:1` (secondary is a surface, so only its label is checked); accent `<ratio>:1 on background`;
+  - two label aliases right after the five, `--color-primary-label` and `--color-secondary-label`, each `var(--color-text)` or `var(--color-background)`, whichever `labelColorFor` picks for that role's active color;
+  - a header comment with the palette verdict, the level and the accent flag.
 - Snapshot-style unit test for a fixed palette.
 
 ### 5.6 URL state

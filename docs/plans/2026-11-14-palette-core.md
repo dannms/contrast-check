@@ -195,7 +195,8 @@ Each line has a test in the task that owns the code (marked "Review focus").
   - output starts with a comment containing the palette verdict, the level and `accent as text: on|off`
   - contains `@theme {` and 55 lines matching `--color-(text|background|primary|secondary|accent)-(50|100|…|950): oklch(…);`, scales built from each role's `seed`
   - contains the five aliases `--color-<role>: var(--color-<role>-<step>);`, where `<step>` is the step whose hex equals the role's `active` color; when `active` is not a step of the seed's scale (after a Fix), the alias is the literal `oklch(...)` of the active color
-  - each alias line ends with a comment `/* <ratio>:1 on background */` (ratio to 2 decimals)
+  - each alias line ends with a comment for its role, ratios from `checkPalette` to 2 decimals: text `/* <text-on-background>:1 on background */`; background `/* surface */` (no ratio); primary `/* label <label-on-primary>:1, <primary-vs-background>:1 vs background */`; secondary `/* label <label-on-secondary>:1 */`; accent `/* <accent-vs-background>:1 on background */`
+  - right after the five aliases, `--color-primary-label: var(--color-text);` or `var(--color-background);`, and the same for `--color-secondary-label`, as `labelColorFor` picks for each role's active color; one test with a light primary (label is text) and one with a dark primary (label is background)
   - Review focus 1: a palette with gray seeds produces no `NaN`
   - snapshot test for one fixed palette (Vitest inline snapshot)
 - [ ] **Step 2: Run** — Expected: FAIL
