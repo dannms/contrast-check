@@ -1,4 +1,11 @@
-import { contrastRatio, type Rgb } from "./color";
+import {
+  contrastRatio,
+  type Rgb,
+  type Suggestion,
+  type SuggestionTarget,
+  TARGET_THRESHOLDS,
+  toHex,
+} from "./color";
 import { oklchToRgb, rgbToOklch } from "./oklch";
 
 // Lightness is sampled from 0 to 1 in this many steps (1001 candidates).
@@ -48,4 +55,21 @@ export function closestPassingLightness(
   }
 
   return best;
+}
+
+/**
+ * Suggests the closest text color that reaches the target contrast on `bg`.
+ *
+ * It keeps the OKLCH hue and chroma of `fg` and changes only the perceptual
+ * lightness (see `closestPassingLightness`). The color comes back unchanged when
+ * it already passes, and `null` when no lightness can reach the target.
+ */
+export function suggestTextColor(
+  fg: Rgb,
+  bg: Rgb,
+  target: SuggestionTarget = "AA",
+): Suggestion | null {
+  const color = closestPassingLightness(fg, bg, TARGET_THRESHOLDS[target]);
+  if (!color) return null;
+  return { hex: toHex(color), ratio: contrastRatio(color, bg) };
 }

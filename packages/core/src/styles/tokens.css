@@ -12,7 +12,7 @@
  *
  * The colors are roles of the derived theme. The app overrides them on its root
  * element with deriveTheme(...) and themeToCssVars(...); the values below are only
- * the fallback and equal deriveTheme(DEFAULT_FG, DEFAULT_BG) from packages/core.
+ * the fallback and equal the theme of the default palette from packages/core.
  */
 :root {
   --cc-surface: #ffffff;
@@ -20,19 +20,20 @@
   --cc-ink-muted: #707785;
   --cc-line: #8d929d;
   --cc-hairline: #e7e8eb;
-  --cc-tint: #f6f7f7;
+  --cc-button: #2f5bd8;
+  --cc-button-label: #fafaf7;
 }
 
 /* Tall screens (min-height 50rem): room for the largest ratio. */
 @custom-variant tall (@media (min-height: 50rem));
 
 /*
- * Actions grid from lg: a content-sized column for Swap and a flexible one for
- * the select. Tailwind has no standard class for "auto minmax(0, 1fr)", and a
+ * Scale strip from lg: a 96px column for the strip label and a flexible one for
+ * the steps. Tailwind has no standard class for "6rem minmax(0, 1fr)", and a
  * bracketed value is not allowed, so it is a named utility.
  */
-@utility grid-cols-actions {
-  grid-template-columns: auto minmax(0, 1fr);
+@utility grid-cols-scale {
+  grid-template-columns: 6rem minmax(0, 1fr);
 }
 
 @theme inline {
@@ -41,7 +42,8 @@
   --color-ink-muted: var(--cc-ink-muted);
   --color-line: var(--cc-line);
   --color-hairline: var(--cc-hairline);
-  --color-tint: var(--cc-tint);
+  --color-button: var(--cc-button);
+  --color-button-label: var(--cc-button-label);
 }
 
 @theme {
@@ -50,19 +52,6 @@
   --font-mono: "DM Mono", ui-monospace, "SF Mono", Consolas, monospace;
 
   --ease-press: cubic-bezier(0.23, 1, 0.32, 1);
-
-  /* Brief highlight of the Text input after a suggestion is applied. */
-  --animate-flash: flash 200ms var(--ease-press);
-
-  @keyframes flash {
-    from {
-      background-color: var(--cc-tint);
-    }
-
-    to {
-      background-color: transparent;
-    }
-  }
 }
 
 body {

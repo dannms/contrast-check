@@ -4,11 +4,11 @@ import {
   evaluate,
   formatRatio,
   parseHex,
-  suggestTextColor,
   summarize,
   toHex,
   verdict,
 } from "./color";
+import { suggestTextColor } from "./lightness";
 import { rgbToOklch } from "./oklch";
 
 const rgb = (hex: string) => {

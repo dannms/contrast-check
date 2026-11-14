@@ -1,10 +1,5 @@
-import {
-  contrastRatio,
-  parseHex,
-  type Rgb,
-  suggestTextColor,
-  toHex,
-} from "./color";
+import { contrastRatio, parseHex, type Rgb, toHex } from "./color";
+import { suggestTextColor } from "./lightness";
 
 export type Theme = {
   surface: string;
@@ -12,7 +7,6 @@ export type Theme = {
   inkMuted: string;
   line: string;
   hairline: string;
-  tint: string;
 };
 
 const FALLBACK_DARK: Rgb = { r: 0x14, g: 0x14, b: 0x16 };
@@ -21,8 +15,6 @@ const FALLBACK_LIGHT: Rgb = { r: 0xfa, g: 0xfa, b: 0xf7 };
 const MUTED_MIN_RATIO = 4.5;
 const LINE_MIN_RATIO = 3.1;
 const HAIRLINE_T = 0.84;
-const TINT_T = 0.9;
-const INK_ON_TINT_MIN_RATIO = 4.5;
 const SEARCH_STEPS = 24;
 
 /** Linear interpolation in sRGB: t = 0 gives `a`, t = 1 gives `b`. */
@@ -67,21 +59,6 @@ function pickInk(fg: Rgb, bg: Rgb): Rgb {
     : FALLBACK_LIGHT;
 }
 
-/** Tint: ink mixed 90% toward the surface, nudged further if ink on tint falls below 4.5:1. */
-function pickTint(ink: Rgb, surface: Rgb): Rgb {
-  const at = (t: number) => mix(ink, surface, t);
-  if (contrastRatio(ink, at(TINT_T)) >= INK_ON_TINT_MIN_RATIO)
-    return at(TINT_T);
-  let lo = TINT_T;
-  let hi = 1;
-  for (let i = 0; i < SEARCH_STEPS; i++) {
-    const mid = (lo + hi) / 2;
-    if (contrastRatio(ink, at(mid)) >= INK_ON_TINT_MIN_RATIO) hi = mid;
-    else lo = mid;
-  }
-  return at(hi);
-}
-
 /**
  * Derives the roles of the app chrome from the chosen pair, so the interface
  * stays readable whatever the person picks. See DESIGN.md, section Theme.
@@ -94,7 +71,6 @@ export function deriveTheme(fg: Rgb, bg: Rgb): Theme {
     inkMuted: toHex(fadeToward(ink, bg, MUTED_MIN_RATIO)),
     line: toHex(fadeToward(ink, bg, LINE_MIN_RATIO)),
     hairline: toHex(mix(ink, bg, HAIRLINE_T)),
-    tint: toHex(pickTint(ink, bg)),
   };
 }
 
@@ -106,6 +82,5 @@ export function themeToCssVars(theme: Theme): Record<string, string> {
     "--cc-ink-muted": theme.inkMuted,
     "--cc-line": theme.line,
     "--cc-hairline": theme.hairline,
-    "--cc-tint": theme.tint,
   };
 }

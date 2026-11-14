@@ -18,7 +18,6 @@ export function ColorField({
   value,
   onChange,
   className = "",
-  flashing = false,
   onFlashEnd,
 }: ColorFieldProps) {
   const rgb = parseHex(value);
@@ -44,7 +43,7 @@ export function ColorField({
           spellCheck={false}
           size={7}
           maxLength={7}
-          className={`min-w-0 flex-1 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink xl:text-5xl ${flashing ? "animate-flash motion-reduce:animate-none" : ""}`}
+          className="min-w-0 flex-1 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink xl:text-5xl"
         />
         <input
           type="color"

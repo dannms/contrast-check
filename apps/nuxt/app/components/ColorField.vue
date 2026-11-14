@@ -41,7 +41,7 @@ function onPick(event: Event) {
         size="7"
         maxlength="7"
         class="min-w-0 flex-1 rounded-none border-0 border-b border-line bg-transparent p-0 pb-2 text-4xl leading-none font-light text-ink aria-[invalid=true]:border-ink xl:text-5xl"
-        :class="{ 'animate-flash motion-reduce:animate-none': flashing }"
+        
       />
       <input
         type="color"

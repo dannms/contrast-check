@@ -80,16 +80,15 @@ describe("deriveTheme", () => {
         }
       }
 
-      it("keeps muted ink, line and tint legible", () => {
+      it("keeps muted ink and line legible", () => {
         expect(ratio(theme.inkMuted, bg)).toBeGreaterThanOrEqual(4.5);
         expect(ratio(theme.line, bg)).toBeGreaterThanOrEqual(3);
-        expect(ratio(theme.ink, theme.tint)).toBeGreaterThanOrEqual(4.5);
       });
 
-      it("places hairline and tint between ink and surface", () => {
+      it("places the hairline between ink and surface", () => {
         const ink = rgb(theme.ink);
         const surface = rgb(bg);
-        for (const role of [theme.hairline, theme.tint]) {
+        for (const role of [theme.hairline]) {
           const c = rgb(role);
           expect(between(c.r, ink.r, surface.r)).toBe(true);
           expect(between(c.g, ink.g, surface.g)).toBe(true);
@@ -113,6 +112,20 @@ describe("deriveTheme", () => {
 });
 
 describe("themeToCssVars", () => {
+  it("has exactly the five theme variables", () => {
+    const theme = deriveTheme(rgb("#777777"), rgb("#FFFFFF"));
+    expect(Object.keys(themeToCssVars(theme)).sort()).toEqual(
+      [
+        "--cc-surface",
+        "--cc-ink",
+        "--cc-ink-muted",
+        "--cc-line",
+        "--cc-hairline",
+      ].sort(),
+    );
+    expect(Object.keys(theme)).not.toContain("tint");
+  });
+
   it("maps every role to its custom property", () => {
     const theme = deriveTheme(rgb("#777777"), rgb("#FFFFFF"));
     expect(themeToCssVars(theme)).toEqual({
@@ -121,7 +134,6 @@ describe("themeToCssVars", () => {
       "--cc-ink-muted": theme.inkMuted,
       "--cc-line": theme.line,
       "--cc-hairline": theme.hairline,
-      "--cc-tint": theme.tint,
     });
   });
 });

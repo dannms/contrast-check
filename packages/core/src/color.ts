@@ -3,8 +3,6 @@
  * No dependencies, no side effects.
  */
 
-import { closestPassingLightness } from "./lightness";
-
 export type Rgb = { r: number; g: number; b: number };
 
 export type CriterionId =
@@ -102,26 +100,6 @@ export function evaluate(fg: Rgb, bg: Rgb): Evaluation {
     ratio,
     criteria: CRITERIA.map((c) => ({ ...c, pass: ratio >= c.threshold })),
   };
-}
-
-/**
- * Suggests the closest text color that reaches the target contrast on `bg`.
- *
- * It keeps the OKLCH hue and chroma of `fg` and changes only the perceptual
- * lightness (see `closestPassingLightness`). The search samples lightness
- * instead of bisecting it: contrast is not monotonic in lightness, because it dips
- * where the text luminance crosses the background's, so lighter and darker
- * candidates both have to be considered. The color comes back unchanged when it
- * already passes, and `null` when no lightness can reach the target.
- */
-export function suggestTextColor(
-  fg: Rgb,
-  bg: Rgb,
-  target: SuggestionTarget = "AA",
-): Suggestion | null {
-  const color = closestPassingLightness(fg, bg, TARGET_THRESHOLDS[target]);
-  if (!color) return null;
-  return { hex: toHex(color), ratio: contrastRatio(color, bg) };
 }
 
 /**
