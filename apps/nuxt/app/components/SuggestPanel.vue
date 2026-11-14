@@ -14,19 +14,15 @@ const target = defineModel<SuggestionTarget>("target", { required: true });
 </script>
 
 <template>
-  <section aria-labelledby="suggest-heading" class="flex flex-col gap-gutter">
-    <h2 id="suggest-heading" class="text-xl font-semibold">Suggestion</h2>
-    <p class="text-muted">
-      Keeps the hue and saturation of the text color and adjusts only its
-      lightness until the target is met.
-    </p>
-    <div class="flex flex-wrap items-end gap-gutter">
-      <div class="flex flex-col gap-tight">
-        <label for="target" class="font-semibold">Target level</label>
+  <section aria-labelledby="suggest-heading" class="flex flex-col gap-2">
+    <h2 id="suggest-heading" class="sr-only">Suggestion</h2>
+    <div class="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-end">
+      <div class="flex flex-col gap-2">
+        <label for="target" class="text-label text-ink-muted">Target level</label>
         <select
           id="target"
           v-model="target"
-          class="h-11 rounded-control border border-edge bg-page px-3 text-ink"
+          class="h-control w-full rounded-control border border-line bg-transparent px-4 text-ui text-ink md:w-auto"
         >
           <option value="AA">AA normal text (4.5:1)</option>
           <option value="AAA">AAA normal text (7:1)</option>
@@ -35,12 +31,17 @@ const target = defineModel<SuggestionTarget>("target", { required: true });
       <button
         type="button"
         :disabled="disabled"
-        class="h-11 cursor-pointer rounded-control bg-accent px-gutter font-semibold text-on-accent disabled:cursor-not-allowed disabled:opacity-60"
+        class="cc-press h-control w-full cursor-pointer rounded-control bg-ink px-4 text-ui text-surface disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
         @click="emit('suggest')"
       >
         Suggest accessible text color
       </button>
     </div>
-    <p aria-live="polite" class="min-h-6">{{ message }}</p>
+    <p class="text-label text-ink-muted">
+      Changes only the lightness of your text color.
+    </p>
+    <p aria-live="polite" class="min-h-6 text-label text-ink-muted">
+      {{ message }}
+    </p>
   </section>
 </template>
