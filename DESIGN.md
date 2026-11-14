@@ -40,7 +40,7 @@ DM Mono only, weights 300, 400 and 500, self-hosted (no Google Fonts CDN).
 | h1 "Contrast Check"          | 14px / 500                                                                                                                         |
 | Hex inputs                   | `clamp(36px, 4.2vw, 48px)` / 300, line-height 1                                                                                    |
 | Ratio                        | `clamp(104px, 15vw, 196px)` / 300, line-height 0.85, letter-spacing -0.045em, no wrap. The ":1" at 0.36em, muted, letter-spacing 0 |
-| Specimen, large              | 56px / 300, line-height 1.05, letter-spacing -0.02em                                                                               |
+| Specimen, large              | `clamp(36px, 9vw, 56px)` / 300, line-height 1.05, letter-spacing -0.02em                                                           |
 | Specimen, medium             | 24px / 500, line-height 1.3                                                                                                        |
 | Specimen, body               | 16px / 400, line-height 1.6, max 66ch                                                                                              |
 

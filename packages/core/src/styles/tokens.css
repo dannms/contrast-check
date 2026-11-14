@@ -50,7 +50,7 @@
   --text-ratio--letter-spacing: -0.045em;
   --text-ratio--font-weight: 300;
   --text-ratio-unit: 0.36em;
-  --text-spec-lg: 56px;
+  --text-spec-lg: clamp(36px, 9vw, 56px);
   --text-spec-lg--line-height: 1.05;
   --text-spec-lg--letter-spacing: -0.02em;
   --text-spec-lg--font-weight: 300;
