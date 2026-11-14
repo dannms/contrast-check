@@ -216,3 +216,12 @@ export function summarize(evaluation: Evaluation): string {
   }
   return parts.join(" ");
 }
+
+/** One short sentence on where the ratio stands, for the visible text under the ratio. */
+export function verdict(evaluation: Evaluation): string {
+  const { ratio } = evaluation;
+  if (ratio >= 7) return "Passes AAA for all text.";
+  if (ratio >= 4.5) return "Passes AA. AAA needs 7:1.";
+  if (ratio >= 3) return "Large text and UI only. Normal text needs 4.5:1.";
+  return "Fails every criterion. Normal text needs 4.5:1.";
+}

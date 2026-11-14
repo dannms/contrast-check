@@ -8,6 +8,7 @@ import {
   suggestTextColor,
   summarize,
   toHex,
+  verdict,
 } from "./color";
 
 const rgb = (hex: string) => {
@@ -140,6 +141,44 @@ describe("summarize", () => {
   it("says all criteria fail without an empty list", () => {
     expect(summarize(evaluate(rgb("#FFFFFF"), rgb("#FFFFFF")))).toBe(
       "1.00:1. Fails all criteria.",
+    );
+  });
+});
+
+describe("verdict", () => {
+  const at = (ratio: number) => ({ ratio, criteria: [] });
+
+  it("covers the four bands with their boundaries", () => {
+    expect(verdict(at(21))).toBe("Passes AAA for all text.");
+    expect(verdict(at(7))).toBe("Passes AAA for all text.");
+    expect(verdict(at(6.99))).toBe("Passes AA. AAA needs 7:1.");
+    expect(verdict(at(4.5))).toBe("Passes AA. AAA needs 7:1.");
+    expect(verdict(at(4.49))).toBe(
+      "Large text and UI only. Normal text needs 4.5:1.",
+    );
+    expect(verdict(at(3))).toBe(
+      "Large text and UI only. Normal text needs 4.5:1.",
+    );
+    expect(verdict(at(2.99))).toBe(
+      "Fails every criterion. Normal text needs 4.5:1.",
+    );
+    expect(verdict(at(1))).toBe(
+      "Fails every criterion. Normal text needs 4.5:1.",
+    );
+  });
+
+  it("matches the reference pairs", () => {
+    expect(verdict(evaluate(rgb("#000000"), rgb("#FFFFFF")))).toBe(
+      "Passes AAA for all text.",
+    );
+    expect(verdict(evaluate(rgb("#767676"), rgb("#FFFFFF")))).toBe(
+      "Passes AA. AAA needs 7:1.",
+    );
+    expect(verdict(evaluate(rgb("#777777"), rgb("#FFFFFF")))).toBe(
+      "Large text and UI only. Normal text needs 4.5:1.",
+    );
+    expect(verdict(evaluate(rgb("#FFFFFF"), rgb("#FFFFFF")))).toBe(
+      "Fails every criterion. Normal text needs 4.5:1.",
     );
   });
 });
