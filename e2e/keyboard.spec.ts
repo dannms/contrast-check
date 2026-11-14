@@ -1,47 +1,36 @@
 import { expect, test } from "@playwright/test";
-import { backgroundInput, ratioValue, textInput } from "./helpers";
 
-test("full flow works with the keyboard only", async ({ page }) => {
+test("tab order follows the screen and Enter focuses a pair", async ({
+  page,
+}) => {
   await page.goto("/");
-  const { keyboard } = page;
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-  await keyboard.press("Tab");
-  await expect(textInput(page)).toBeFocused();
-  await keyboard.press("Control+A");
-  await keyboard.type("#777777");
+  const inOrder = [
+    page.getByLabel("Text", { exact: true }),
+    page.getByLabel("Text color picker"),
+    page.getByLabel("Background", { exact: true }),
+    page.getByLabel("Background color picker"),
+    page.getByLabel("Primary", { exact: true }),
+    page.getByLabel("Primary color picker"),
+    page.getByLabel("Secondary", { exact: true }),
+    page.getByLabel("Secondary color picker"),
+    page.getByLabel("Accent", { exact: true }),
+    page.getByLabel("Accent color picker"),
+    page.getByRole("button", { name: "Swap text and background" }),
+    page.getByLabel("Level"),
+    page.getByRole("switch", { name: "Accent as text" }),
+    page.getByRole("button", { name: "Text on background" }),
+  ];
+  for (const target of inOrder) {
+    await page.keyboard.press("Tab");
+    await expect(target).toBeFocused();
+  }
 
-  await keyboard.press("Tab");
-  await expect(page.getByLabel("Text color picker")).toBeFocused();
-
-  await keyboard.press("Tab");
-  await expect(backgroundInput(page)).toBeFocused();
-  await keyboard.press("Control+A");
-  await keyboard.type("#FFFFFF");
-
-  await keyboard.press("Tab");
-  await expect(page.getByLabel("Background color picker")).toBeFocused();
-
-  await keyboard.press("Tab");
-  const swap = page.getByRole("button", { name: "Swap colors" });
-  await expect(swap).toBeFocused();
-  await keyboard.press("Enter");
-  await expect(textInput(page)).toHaveValue("#FFFFFF");
-  await keyboard.press("Enter");
-  await expect(textInput(page)).toHaveValue("#777777");
-
-  await keyboard.press("Tab");
-  const target = page.getByLabel("Target level");
-  await expect(target).toBeFocused();
-  await keyboard.press("ArrowDown");
-  await expect(target).toHaveValue("AAA");
-
-  await keyboard.press("Tab");
-  const suggest = page.getByRole("button", {
-    name: "Suggest accessible text color",
-  });
-  await expect(suggest).toBeFocused();
-  await keyboard.press("Enter");
-
-  await expect(page.getByTestId("aaa-normal")).toContainText("Pass");
-  expect(await ratioValue(page)).toBeGreaterThanOrEqual(7);
+  await page.keyboard.press("Tab");
+  const next = page.getByRole("button", { name: "Label on primary" });
+  await expect(next).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(next).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("In focus · Label on primary")).toBeVisible();
 });
