@@ -1,4 +1,5 @@
 import { contrastRatio, parseHex, type Rgb, toHex } from "./color";
+import { closestPassingLightness } from "./lightness";
 
 export const ROLES = [
   "text",
@@ -164,4 +165,67 @@ export function paletteVerdict(results: PairResult[], level: Level): string {
   return failed === 0
     ? `Passes ${level} · ${results.length} of ${results.length} pairs`
     : `Fails ${level} · ${failed} of ${results.length} pairs fail`;
+}
+
+export type FixResult =
+  | { palette: Palette }
+  | { palette: null; blockedBy: PairId[] };
+
+/**
+ * Fixes one failing pair by changing only the `active` color of the pair's
+ * `fixRole` (never its seed), with the OKLCH lightness search. A pair that
+ * already passes (or is not checked) comes back as the same palette.
+ *
+ * A candidate is accepted only if the target pair passes and every pair that
+ * passed before still passes. When no candidate satisfies both, the result is
+ * `null` with the pairs the best unconstrained candidate would have broken.
+ */
+export function fixPair(
+  palette: Palette,
+  pairId: PairId,
+  options: PaletteOptions,
+): FixResult {
+  const before = checkPalette(palette, options);
+  const target = before.find((r) => r.id === pairId);
+  if (!target || target.pass) return { palette };
+
+  const role = target.fixRole;
+  const passedBefore = before.filter((r) => r.pass).map((r) => r.id);
+  const withActive = (hex: string): Palette => ({
+    ...palette,
+    [role]: { ...palette[role], active: hex },
+  });
+
+  // For a label pair the changed role is the fill, so the search runs against the label.
+  const against = rgbOf(
+    pairId.startsWith("label-on-") ? target.foreground : target.backgroundColor,
+  );
+  const base = rgbOf(palette[role].active);
+
+  const accept = (candidate: Rgb): boolean => {
+    const after = checkPalette(withActive(toHex(candidate)), options);
+    const passes = (id: PairId) =>
+      after.find((r) => r.id === id)?.pass === true;
+    return passes(pairId) && passedBefore.every(passes);
+  };
+
+  const fixed = closestPassingLightness(
+    base,
+    against,
+    target.threshold,
+    accept,
+  );
+  if (fixed) return { palette: withActive(toHex(fixed)) };
+
+  const unconstrained = closestPassingLightness(
+    base,
+    against,
+    target.threshold,
+  );
+  if (!unconstrained) return { palette: null, blockedBy: [] };
+  const after = checkPalette(withActive(toHex(unconstrained)), options);
+  const blockedBy = passedBefore.filter(
+    (id) => after.find((r) => r.id === id)?.pass !== true,
+  );
+  return { palette: null, blockedBy };
 }
