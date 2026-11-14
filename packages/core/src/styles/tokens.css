@@ -5,6 +5,11 @@
 /*
  * Design tokens, see DESIGN.md.
  *
+ * Sizes, spacing and type come from the default Tailwind scales and are written as
+ * utility classes in the components: no custom size tokens live here. What is
+ * custom is the derived theme colors, the font family, the easing and the "tall"
+ * variant.
+ *
  * The colors are roles of the derived theme. The app overrides them on its root
  * element with deriveTheme(...) and themeToCssVars(...); the values below are only
  * the fallback and equal deriveTheme(DEFAULT_FG, DEFAULT_BG) from packages/core.
@@ -18,6 +23,9 @@
   --cc-tint: #f6f7f7;
 }
 
+/* Screens at least 800px high (50rem): room for the largest ratio. */
+@custom-variant tall (@media (min-height: 50rem));
+
 @theme inline {
   --color-surface: var(--cc-surface);
   --color-ink: var(--cc-ink);
@@ -27,66 +35,25 @@
   --color-tint: var(--cc-tint);
 }
 
-@theme static {
+@theme {
   /* One monospaced family for everything. */
   --font-sans: "DM Mono", ui-monospace, "SF Mono", Consolas, monospace;
   --font-mono: "DM Mono", ui-monospace, "SF Mono", Consolas, monospace;
 
-  /* Type scale: size, with its line-height, letter-spacing and weight. */
-  --text-label: 12px;
-  --text-label--line-height: 1.4;
-  --text-label--font-weight: 400;
-  --text-ui: 13px;
-  --text-ui--line-height: 1.5;
-  --text-ui--font-weight: 400;
-  --text-title: 14px;
-  --text-title--line-height: 1.4;
-  --text-title--font-weight: 500;
-  --text-input: clamp(36px, 4.2vw, 48px);
-  --text-input--line-height: 1;
-  --text-input--font-weight: 300;
-  --text-ratio: clamp(104px, 15vw, 196px);
-  --text-ratio--line-height: 0.85;
-  --text-ratio--letter-spacing: -0.045em;
-  --text-ratio--font-weight: 300;
-  --text-ratio-unit: 0.36em;
-  --text-spec-lg: clamp(36px, 9vw, 56px);
-  --text-spec-lg--line-height: 1.05;
-  --text-spec-lg--letter-spacing: -0.02em;
-  --text-spec-lg--font-weight: 300;
-  --text-spec-md: 24px;
-  --text-spec-md--line-height: 1.3;
-  --text-spec-md--font-weight: 500;
-  --text-spec-body: 16px;
-  --text-spec-body--line-height: 1.6;
-  --text-spec-body--font-weight: 400;
-
-  /* Spacing and sizes. */
-  --spacing-gutter: clamp(20px, 4vw, 48px);
-  --spacing-page-top: clamp(28px, 5vw, 64px);
-  --spacing-page-bottom: 48px;
-  --spacing-row-top: clamp(40px, 6vw, 64px);
-  --spacing-group: 28px;
-  --spacing-column: 40px;
-  --spacing-rule: 40px;
-  --spacing-results-top: 72px;
-  --spacing-preview-top: 80px;
-  --spacing-footer-top: 96px;
-  --spacing-row: 13px;
-  --spacing-control: 44px;
-  --spacing-icon: 14px;
-  --spacing-hex: 7ch;
-  --container-page: 1180px;
-  --container-summary: 44ch;
-  --container-prose: 66ch;
-  --container-ratio: 380px;
-  --container-criteria: 400px;
-
-  --radius-control: 2px;
-
   --ease-press: cubic-bezier(0.23, 1, 0.32, 1);
-  --duration-press: 160ms;
-  --duration-flash: 200ms;
+
+  /* Brief highlight of the Text input after a suggestion is applied. */
+  --animate-flash: flash 200ms var(--ease-press);
+
+  @keyframes flash {
+    from {
+      background-color: var(--cc-tint);
+    }
+
+    to {
+      background-color: transparent;
+    }
+  }
 }
 
 body {
@@ -94,66 +61,31 @@ body {
   color: var(--cc-ink);
 }
 
-:focus-visible {
-  outline: 2px solid var(--cc-ink);
-  outline-offset: 3px;
+@layer base {
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ink;
+  }
 }
 
-/* Native color input shown as a circle. */
-.cc-swatch {
-  appearance: none;
-  width: var(--spacing-control);
-  height: var(--spacing-control);
-  padding: 0;
-  border: 1px solid var(--cc-line);
-  border-radius: 9999px;
-  background: transparent;
-  overflow: hidden;
-  cursor: pointer;
-}
-
+/* Native color input shown as a circle: only the vendor pseudo-elements need CSS. */
 .cc-swatch::-webkit-color-swatch-wrapper {
   padding: 0;
 }
 
 .cc-swatch::-webkit-color-swatch {
   border: 0;
-  border-radius: 9999px;
+  border-radius: 50%;
 }
 
 .cc-swatch::-moz-color-swatch {
   border: 0;
-  border-radius: 9999px;
-}
-
-/* Press feedback for buttons. */
-.cc-press {
-  transition: transform var(--duration-press) var(--ease-press);
-}
-
-.cc-press:active {
-  transform: scale(0.97);
-}
-
-/* Brief tint on the Text input after a suggestion is applied. */
-@keyframes cc-flash {
-  0%,
-  99.9% {
-    background-color: var(--cc-tint);
-  }
-}
-
-.cc-flash {
-  animation: cc-flash var(--duration-flash) steps(1, end);
+  border-radius: 50%;
 }
 
 @media (hover: hover) and (pointer: fine) {
   input[type="text"]:hover,
   select:hover,
-  .cc-outline:hover {
-    border-color: var(--cc-ink);
-  }
-
+  .cc-outline:hover,
   .cc-swatch:hover {
     border-color: var(--cc-ink);
   }
@@ -165,9 +97,5 @@ body {
   *::after {
     animation: none;
     transition: none;
-  }
-
-  .cc-press:active {
-    transform: none;
   }
 }
