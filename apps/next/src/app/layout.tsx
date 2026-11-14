@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Contrast Check",
   description:
-    "Check text and background color contrast against WCAG 2.2 and get an accessible text color suggestion.",
+    "Check a five-color palette against WCAG 2.2, fix failing pairs and export a Tailwind theme.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
