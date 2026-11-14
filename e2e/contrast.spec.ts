@@ -97,9 +97,7 @@ test("live summary updates when the colors change", async ({ page }) => {
   );
 });
 
-test("shows an approved pair exactly as chosen", async ({ page }, testInfo) => {
-  // Enabled once the Nuxt app receives the redesign.
-  test.skip(testInfo.project.name === "nuxt");
+test("shows an approved pair exactly as chosen", async ({ page }) => {
   await page.goto("/?fg=000000&bg=FFFFFF");
   await expect(page.getByRole("heading", { level: 1 })).toHaveCSS(
     "color",
