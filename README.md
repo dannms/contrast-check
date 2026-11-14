@@ -16,19 +16,19 @@ The page takes the background color you choose, and the specimen in the Preview 
 
 Everything else, the labels, borders, focus ring and buttons, uses a theme derived from your text color by `deriveTheme` in `packages/core`, which reuses the same `suggestTextColor` that powers the suggestion. If the pair reaches AA (4.5:1), the interface uses your exact colors. If it does not, only the interface gets the closest tone of your text color that does (same hue and saturation, HSL lightness only), and if no tone can, near-black or near-white. So the app uses its own algorithm to stay readable with any pair. The theme is computed on the server from the URL, so the first paint is already themed, and while a hex field holds an invalid value the theme keeps the last valid pair.
 
-| Dark surface, `#5B7BB5` on `#12151C` | Failing pair, `#EEEEEE` on white |
-| --- | --- |
-| ![#5B7BB5 text on a #12151C page, with a 4.30:1 ratio and the whole interface in the same blue.](docs/screenshot-dark.png) | ![#EEEEEE text on a white page, with a 1.16:1 ratio and every criterion failing.](docs/screenshot-failing.png) |
-| The page and the interface follow the chosen colors, not the operating system theme. This pair falls just short of AA, so the interface uses a slightly lighter blue. | The specimen almost disappears, and the interface stays legible. |
+| Dark surface, `#5B7BB5` on `#12151C`                                                                                                                                  | Failing pair, `#EEEEEE` on white                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| ![#5B7BB5 text on a #12151C page, with a 4.30:1 ratio and the whole interface in the same blue.](docs/screenshot-dark.png)                                            | ![#EEEEEE text on a white page, with a 1.16:1 ratio and every criterion failing.](docs/screenshot-failing.png) |
+| The page and the interface follow the chosen colors, not the operating system theme. This pair falls just short of AA, so the interface uses a slightly lighter blue. | The specimen almost disappears, and the interface stays legible.                                               |
 
-| Role | Rule | Contrast floor |
-| --- | --- | --- |
-| `surface` | The chosen background | Not applicable |
-| `ink` | The chosen text color when the pair reaches 4.5:1, else its closest passing tone | 4.5:1 on the surface |
-| `ink-muted` | Ink mixed toward the surface as far as possible. Labels and secondary text | 4.5:1 on the surface |
-| `line` | Ink mixed further toward the surface. Input underlines and control borders | 3.1:1 on the surface (WCAG 1.4.11 asks for 3:1) |
-| `hairline` | Ink mixed 84% toward the surface. Decorative dividers only | None; never a control boundary |
-| `tint` | Ink mixed 90% toward the surface. Brief highlight of the Text input after a suggestion | None in the design; `deriveTheme` still keeps ink on tint at 4.5:1 |
+| Role        | Rule                                                                                   | Contrast floor                                                     |
+| ----------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `surface`   | The chosen background                                                                  | Not applicable                                                     |
+| `ink`       | The chosen text color when the pair reaches 4.5:1, else its closest passing tone       | 4.5:1 on the surface                                               |
+| `ink-muted` | Ink mixed toward the surface as far as possible. Labels and secondary text             | 4.5:1 on the surface                                               |
+| `line`      | Ink mixed further toward the surface. Input underlines and control borders             | 3.1:1 on the surface (WCAG 1.4.11 asks for 3:1)                    |
+| `hairline`  | Ink mixed 84% toward the surface. Decorative dividers only                             | None; never a control boundary                                     |
+| `tint`      | Ink mixed 90% toward the surface. Brief highlight of the Text input after a suggestion | None in the design; `deriveTheme` still keeps ink on tint at 4.5:1 |
 
 ## Why two frameworks
 
