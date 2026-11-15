@@ -77,9 +77,7 @@ export type PaletteView = {
   message: string;
   copy: {
     state: CopyState;
-    buttonLabel: "Copy" | "Copied";
     announcement: string;
-    error: string;
   };
   scales: {
     role: Role;
@@ -113,6 +111,12 @@ const rgbOf = (hex: string): Rgb => parseHex(hex) ?? BLACK;
 const hexOf = (hex: string): string => toHex(rgbOf(hex));
 const capitalize = (word: string): string =>
   word.charAt(0).toUpperCase() + word.slice(1);
+
+const COPY_ANNOUNCEMENT: Record<CopyState, string> = {
+  idle: "",
+  copied: "Theme copied.",
+  failed: "Copy failed. The code is selected, copy it with your keyboard.",
+};
 
 const INVALID_HEX = "Enter 3 or 6 hex digits, like 1A2B3C.";
 const DARK_SURFACE_LUMINANCE = 0.18;
@@ -382,12 +386,7 @@ export function paletteView(state: ViewState): PaletteView {
     message: state.message,
     copy: {
       state: state.copy,
-      buttonLabel: state.copy === "copied" ? "Copied" : "Copy",
-      announcement: state.copy === "copied" ? "Theme copied." : "",
-      error:
-        state.copy === "failed"
-          ? "Copy failed. Select the code and copy it."
-          : "",
+      announcement: COPY_ANNOUNCEMENT[state.copy],
     },
     scales,
     preview: {

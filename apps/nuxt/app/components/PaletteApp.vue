@@ -25,19 +25,21 @@ async function dispatch(action: ViewAction) {
     ?.focus();
 }
 
-// The "Copied" feedback goes back to "Copy" after two seconds.
+// The result shows on the button and goes back to idle after two seconds.
 let copyTimer: ReturnType<typeof setTimeout> | undefined;
 onBeforeUnmount(() => clearTimeout(copyTimer));
 
 async function copy() {
   clearTimeout(copyTimer);
+  let ok = false;
   try {
     await navigator.clipboard.writeText(view.value.exportText);
-    dispatch({ type: "copied", ok: true });
-    copyTimer = setTimeout(() => dispatch({ type: "copyReset" }), 2000);
+    ok = true;
   } catch {
-    dispatch({ type: "copied", ok: false });
+    ok = false;
   }
+  dispatch({ type: "copied", ok });
+  copyTimer = setTimeout(() => dispatch({ type: "copyReset" }), 2000);
 }
 
 // Tells the tests (and anything else) that the handlers are attached.

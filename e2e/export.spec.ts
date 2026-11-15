@@ -8,41 +8,28 @@ test("the export shows the theme with the label aliases", async ({ page }) => {
   await expect(code).toContainText("--color-primary-label");
 });
 
-test("copy confirms on the button and goes back to Copy", async ({
+test("copy shows the result as an icon on the button", async ({
   page,
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await gotoReady(page, "/");
-  const button = page.getByTestId("copy-button");
-  await expect(button).toHaveText("Copy");
+  const button = page.getByRole("button", { name: "Copy theme" });
+  await expect(button).toHaveAttribute("data-state", "idle");
   const before = (await button.boundingBox())?.width;
 
   await button.click();
-  await expect(button).toHaveText("Copied");
+  await expect(button).toHaveAttribute("data-state", "copied");
   await expect(page.getByTestId("copy-announcement")).toHaveText(
     "Theme copied.",
   );
-  await expect(page.getByTestId("copy-error")).toBeEmpty();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
+    "@theme {",
+  );
   expect((await button.boundingBox())?.width).toBe(before);
   // The results message is only for Fix.
   await expect(page.getByTestId("message")).toBeEmpty();
 
-  await expect(button).toHaveText("Copy");
+  await expect(button).toHaveAttribute("data-state", "idle");
   await expect(page.getByTestId("copy-announcement")).toBeEmpty();
-});
-
-test("copy failure shows the error under the header", async ({ page }) => {
-  await gotoReady(page, "/");
-  await page.evaluate(() => {
-    Object.defineProperty(navigator, "clipboard", {
-      value: { writeText: () => Promise.reject(new Error("denied")) },
-      configurable: true,
-    });
-  });
-  await page.getByTestId("copy-button").click();
-  await expect(page.getByTestId("copy-error")).toHaveText(
-    "Copy failed. Select the code and copy it.",
-  );
-  await expect(page.getByTestId("copy-button")).toHaveText("Copy");
 });

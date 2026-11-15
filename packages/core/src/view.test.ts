@@ -357,16 +357,14 @@ describe("reduce", () => {
     );
   });
 
-  it("copy starts idle and shows the Copy label", () => {
+  it("copy starts idle with no announcement", () => {
     expect(paletteView(start()).copy).toEqual({
       state: "idle",
-      buttonLabel: "Copy",
       announcement: "",
-      error: "",
     });
   });
 
-  it("copied success switches the button and announces, without touching the message", () => {
+  it("copied success announces, without touching the message", () => {
     const fixed = run(
       start(
         makePalette({
@@ -384,20 +382,17 @@ describe("reduce", () => {
     expect(state.message).toBe(fixed.message);
     expect(paletteView(state).copy).toEqual({
       state: "copied",
-      buttonLabel: "Copied",
       announcement: "Theme copied.",
-      error: "",
     });
   });
 
-  it("copied failure keeps the label and shows the error", () => {
+  it("copied failure announces that the code is selected", () => {
     const state = run(start(), { type: "copied", ok: false });
     expect(state.message).toBe("");
     expect(paletteView(state).copy).toEqual({
       state: "failed",
-      buttonLabel: "Copy",
-      announcement: "",
-      error: "Copy failed. Select the code and copy it.",
+      announcement:
+        "Copy failed. The code is selected, copy it with your keyboard.",
     });
   });
 

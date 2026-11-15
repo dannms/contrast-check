@@ -72,18 +72,20 @@ export function PaletteApp({ palette, options }: Props) {
     );
   }, [view.query]);
 
-  // The "Copied" feedback goes back to "Copy" after two seconds.
+  // The result shows on the button and goes back to idle after two seconds.
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(copyTimer.current), []);
   const copy = async () => {
     clearTimeout(copyTimer.current);
+    let ok = false;
     try {
       await navigator.clipboard.writeText(view.exportText);
-      act({ type: "copied", ok: true });
-      copyTimer.current = setTimeout(() => act({ type: "copyReset" }), 2000);
+      ok = true;
     } catch {
-      act({ type: "copied", ok: false });
+      ok = false;
     }
+    act({ type: "copied", ok });
+    copyTimer.current = setTimeout(() => act({ type: "copyReset" }), 2000);
   };
 
   return (
