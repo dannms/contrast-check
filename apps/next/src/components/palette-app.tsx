@@ -18,6 +18,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { copyText } from "@/lib/copy-text";
 import { PairResults } from "./pair-results";
 import { PaletteActions } from "./palette-actions";
 import { PaletteFields } from "./palette-fields";
@@ -77,13 +78,10 @@ export function PaletteApp({ palette, options }: Props) {
   useEffect(() => () => clearTimeout(copyTimer.current), []);
   const copy = async () => {
     clearTimeout(copyTimer.current);
-    let ok = false;
-    try {
-      await navigator.clipboard.writeText(view.exportText);
-      ok = true;
-    } catch {
-      ok = false;
-    }
+    const ok = await copyText(
+      view.exportText,
+      document.getElementById("export-code"),
+    );
     act({ type: "copied", ok });
     copyTimer.current = setTimeout(() => act({ type: "copyReset" }), 2000);
   };

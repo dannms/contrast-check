@@ -33,3 +33,33 @@ test("copy shows the result as an icon on the button", async ({
   await expect(button).toHaveAttribute("data-state", "idle");
   await expect(page.getByTestId("copy-announcement")).toBeEmpty();
 });
+
+test("when the clipboard is blocked the code gets selected", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      value: undefined,
+      configurable: true,
+    });
+    document.execCommand = () => false;
+  });
+  await gotoReady(page, "/");
+  await page.getByRole("button", { name: "Copy theme" }).click();
+
+  await expect(
+    page.getByRole("button", { name: "Copy theme" }),
+  ).toHaveAttribute("data-state", "failed");
+  await expect(page.getByTestId("copy-announcement")).toHaveText(
+    "Copy failed. The code is selected, copy it with your keyboard.",
+  );
+  expect(
+    await page.evaluate(() => window.getSelection()?.toString()),
+  ).toContain("@theme {");
+  await expect(page.getByTestId("export-code")).toBeFocused();
+  await expect(page.getByTestId("copy-error")).toHaveCount(0);
+
+  await expect(
+    page.getByRole("button", { name: "Copy theme" }),
+  ).toHaveAttribute("data-state", "idle");
+});

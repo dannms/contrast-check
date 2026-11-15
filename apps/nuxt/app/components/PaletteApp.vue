@@ -31,13 +31,10 @@ onBeforeUnmount(() => clearTimeout(copyTimer));
 
 async function copy() {
   clearTimeout(copyTimer);
-  let ok = false;
-  try {
-    await navigator.clipboard.writeText(view.value.exportText);
-    ok = true;
-  } catch {
-    ok = false;
-  }
+  const ok = await copyText(
+    view.value.exportText,
+    document.getElementById("export-code"),
+  );
   dispatch({ type: "copied", ok });
   copyTimer = setTimeout(() => dispatch({ type: "copyReset" }), 2000);
 }
