@@ -6,7 +6,7 @@ Source of truth for the visual design. Values are normative.
 
 - **Roles**: the person chooses five colors: text, background, primary, secondary and accent. The surface is the active background.
 - **Preview**: the Preview section uses the exact colors the person chose, unadjusted. It is what is being tested and may fail, so it is exempt from the contrast goals.
-- **Chrome**: everything else (text, labels, borders, focus, buttons) uses a theme derived from text and background by `deriveTheme`, so it stays readable for any palette. See Theme.
+- **Chrome**: everything else (text, labels, borders, focus, buttons) uses a theme derived from text and background by `deriveTheme`, so it stays readable for any palette. Filled buttons use the primary only when both of its pairs pass; otherwise ink on surface. See Theme.
 
 Direction: minimalism in the style of Scale (hihayk.github.io/scale) combined with the idea of Realtime Colors, where the page is the preview. Mobile-first. One monospaced family. No cards, no shadows, no gradients, no glassmorphism. 1px dividers, 2px radius on controls, a circular color swatch.
 
@@ -22,7 +22,7 @@ Computed by `deriveTheme` in `packages/core` and exposed as CSS custom propertie
 | `--cc-line`      | Ink mixed toward the surface keeping at least 3.1:1. Input underlines and control borders (WCAG 1.4.11).                                                                                                                        |
 | `--cc-hairline`  | Ink mixed 84% toward the surface. Decorative dividers only, never a control boundary.                                                                                                                                           |
 
-- Filled chrome buttons (Fix, Copy): background primary and text in the label color of the primary (`labelColorFor`) when the `label-on-primary` pair passes AA. Otherwise background `--cc-ink` and text `--cc-surface`.
+- Filled chrome buttons (Fix, Copy): background primary and text in the label color of the primary (`labelColorFor`) only when both `label-on-primary` and `primary-vs-background` pass at the chosen level. Otherwise background `--cc-ink` and text `--cc-surface`.
 - Why ink keeps the exact color: pairs that pass AA appear exactly as chosen, as in Realtime Colors. Only failing pairs get an adjusted tone in the interface, and the Preview always shows the exact colors.
 - Focus ring: `outline-2 outline-offset-2 outline-ink` (2px, ink color, 2px offset).
 - While an input holds an invalid hex, the theme keeps the last valid pair, so nothing flashes.

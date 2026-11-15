@@ -372,7 +372,7 @@ describe("preview", () => {
 });
 
 describe("chrome buttons", () => {
-  it("use primary and its label when label-on-primary passes AA", () => {
+  it("use primary and its label when label-on-primary and primary-against-background pass", () => {
     const vars = paletteView(start()).cssVars;
     expect(vars["--cc-button"]).toBe("#2F5BD8");
     expect(vars["--cc-button-label"]).toBe(
@@ -385,9 +385,15 @@ describe("chrome buttons", () => {
       secondary: "#E9ECF5",
       accent: "#C2410C",
     });
+    // The label passes (9.33:1) but the primary is 1.72:1 against the background.
+    const pairs = checkPalette(light, DEFAULT_PALETTE_OPTIONS);
+    expect(pairs.find((p) => p.id === "label-on-primary")?.pass).toBe(true);
+    expect(pairs.find((p) => p.id === "primary-vs-background")?.pass).toBe(
+      false,
+    );
     const lightVars = paletteView(start(light)).cssVars;
-    expect(lightVars["--cc-button"]).toBe("#93C5FD");
-    expect(lightVars["--cc-button-label"]).toBe("#1C1D22");
+    expect(lightVars["--cc-button"]).toBe(lightVars["--cc-ink"]);
+    expect(lightVars["--cc-button-label"]).toBe(lightVars["--cc-surface"]);
   });
 
   it("fall back to ink on surface when label-on-primary fails", () => {

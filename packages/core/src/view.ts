@@ -1,5 +1,4 @@
 import {
-  contrastRatio,
   formatRatio,
   parseHex,
   type Rgb,
@@ -14,6 +13,7 @@ import {
   type Level,
   labelColorFor,
   type PairId,
+  type PairResult,
   type Palette,
   type PaletteOptions,
   paletteVerdict,
@@ -109,7 +109,6 @@ const capitalize = (word: string): string =>
 
 const INVALID_HEX = "Enter 3 or 6 hex digits, like 1A2B3C.";
 const DARK_SURFACE_LUMINANCE = 0.18;
-const BUTTON_MIN_RATIO = 4.5;
 const FIRST_FOCUS: PairId = "text-on-background";
 
 export function initialViewState(
@@ -257,15 +256,17 @@ const HIGHLIGHT: Record<PairId, PaletteView["preview"]["highlight"]> = {
   "accent-as-text": "link",
 };
 
-/** Primary with its label when that pair passes AA, otherwise ink on surface. */
+/** Primary with its label when its label pair and its pair against the background pass, otherwise ink on surface. */
 function chromeButton(
+  results: PairResult[],
   palette: Palette,
   themeVars: Record<string, string>,
 ): Record<string, string> {
   const primary = hexOf(palette.primary.active);
   const label = labelColorFor(primary, palette);
-  const passes =
-    contrastRatio(rgbOf(label), rgbOf(primary)) >= BUTTON_MIN_RATIO;
+  const passes = ["label-on-primary", "primary-vs-background"].every(
+    (id) => results.find((r) => r.id === id)?.pass === true,
+  );
   return {
     "--cc-button": passes ? primary : (themeVars["--cc-ink"] ?? primary),
     "--cc-button-label": passes ? label : (themeVars["--cc-surface"] ?? label),
@@ -329,7 +330,7 @@ export function paletteView(state: ViewState): PaletteView {
   const secondary = hexOf(palette.secondary.active);
 
   return {
-    cssVars: { ...themeVars, ...chromeButton(palette, themeVars) },
+    cssVars: { ...themeVars, ...chromeButton(results, palette, themeVars) },
     colorScheme:
       relativeLuminance(rgbOf(palette.background.active)) <
       DARK_SURFACE_LUMINANCE
