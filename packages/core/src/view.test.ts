@@ -357,16 +357,76 @@ describe("reduce", () => {
     );
   });
 
-  it("copied sets the two messages and any other action clears them", () => {
-    const ok = run(start(), { type: "copied", ok: true });
-    expect(ok.message).toBe("Theme copied.");
-    expect(run(start(), { type: "copied", ok: false }).message).toBe(
-      "Copy failed. Select the code and copy it.",
+  it("copy starts idle and shows the Copy label", () => {
+    expect(paletteView(start()).copy).toEqual({
+      state: "idle",
+      buttonLabel: "Copy",
+      announcement: "",
+      error: "",
+    });
+  });
+
+  it("copied success switches the button and announces, without touching the message", () => {
+    const fixed = run(
+      start(
+        makePalette({
+          text: "#1C1D22",
+          background: "#FAFAF7",
+          primary: "#2F5BD8",
+          secondary: "#E9ECF5",
+          accent: "#F97316",
+        }),
+      ),
+      { type: "fix", pair: "accent-vs-background" },
     );
-    expect(run(ok, { type: "focus", pair: "label-on-primary" }).message).toBe(
-      "",
+    expect(fixed.message).toMatch(/^Accent set to #/);
+    const state = run(fixed, { type: "copied", ok: true });
+    expect(state.message).toBe(fixed.message);
+    expect(paletteView(state).copy).toEqual({
+      state: "copied",
+      buttonLabel: "Copied",
+      announcement: "Theme copied.",
+      error: "",
+    });
+  });
+
+  it("copied failure keeps the label and shows the error", () => {
+    const state = run(start(), { type: "copied", ok: false });
+    expect(state.message).toBe("");
+    expect(paletteView(state).copy).toEqual({
+      state: "failed",
+      buttonLabel: "Copy",
+      announcement: "",
+      error: "Copy failed. Select the code and copy it.",
+    });
+  });
+
+  it("copyReset goes back to idle and leaves the message alone", () => {
+    const copied = run(start(), { type: "copied", ok: true });
+    expect(run(copied, { type: "copyReset" }).copy).toBe("idle");
+    const withMessage = { ...copied, message: "Accent set to #AABBCC." };
+    expect(reduce(withMessage, { type: "copyReset" }).message).toBe(
+      "Accent set to #AABBCC.",
     );
-    expect(run(ok, { type: "level", level: "AAA" }).message).toBe("");
+  });
+
+  it("any other action brings copy back to idle and clears the message", () => {
+    const copied = {
+      ...run(start(), { type: "copied", ok: true }),
+      message: "Accent set to #AABBCC.",
+    };
+    for (const action of [
+      { type: "focus", pair: "label-on-primary" },
+      { type: "level", level: "AAA" },
+      { type: "swap" },
+      { type: "accentAsText", on: false },
+    ] as const) {
+      const next = reduce(copied, action);
+      expect(next.copy).toBe("idle");
+      expect(next.message).toBe("");
+    }
+    const failed = run(start(), { type: "copied", ok: false });
+    expect(run(failed, { type: "swap" }).copy).toBe("idle");
   });
 
   it("focus ignores unknown pairs", () => {

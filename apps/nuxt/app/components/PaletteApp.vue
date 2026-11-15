@@ -25,10 +25,16 @@ async function dispatch(action: ViewAction) {
     ?.focus();
 }
 
+// The "Copied" feedback goes back to "Copy" after two seconds.
+let copyTimer: ReturnType<typeof setTimeout> | undefined;
+onBeforeUnmount(() => clearTimeout(copyTimer));
+
 async function copy() {
+  clearTimeout(copyTimer);
   try {
     await navigator.clipboard.writeText(view.value.exportText);
     dispatch({ type: "copied", ok: true });
+    copyTimer = setTimeout(() => dispatch({ type: "copyReset" }), 2000);
   } catch {
     dispatch({ type: "copied", ok: false });
   }
@@ -91,7 +97,11 @@ onMounted(() => {
 
         <div class="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
           <PalettePreview :preview="view.preview" />
-          <ThemeExport :export-text="view.exportText" @copy="copy" />
+          <ThemeExport
+            :export-text="view.exportText"
+            :copy="view.copy"
+            @copy="copy"
+          />
         </div>
       </main>
 

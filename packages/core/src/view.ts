@@ -24,6 +24,8 @@ import { annotateScale, type StepName, scaleFor, type Use } from "./scale";
 import { deriveTheme, themeToCssVars } from "./theme";
 import { buildPaletteQuery } from "./url-state";
 
+export type CopyState = "idle" | "copied" | "failed";
+
 export type ViewState = {
   palette: Palette;
   options: PaletteOptions;
@@ -31,6 +33,7 @@ export type ViewState = {
   drafts: Record<Role, string>;
   focus: PairId;
   message: string;
+  copy: CopyState;
 };
 
 export type ViewAction =
@@ -42,7 +45,8 @@ export type ViewAction =
   | { type: "accentAsText"; on: boolean }
   | { type: "focus"; pair: PairId }
   | { type: "fix"; pair: PairId }
-  | { type: "copied"; ok: boolean };
+  | { type: "copied"; ok: boolean }
+  | { type: "copyReset" };
 
 export type PaletteView = {
   cssVars: Record<string, string>;
@@ -71,6 +75,12 @@ export type PaletteView = {
   }[];
   liveSummary: string;
   message: string;
+  copy: {
+    state: CopyState;
+    buttonLabel: "Copy" | "Copied";
+    announcement: string;
+    error: string;
+  };
   scales: {
     role: Role;
     label: string;
@@ -115,7 +125,14 @@ export function initialViewState(
   const drafts = Object.fromEntries(
     ROLES.map((role) => [role, hexOf(palette[role].active)]),
   ) as Record<Role, string>;
-  return { palette, options, drafts, focus: FIRST_FOCUS, message: "" };
+  return {
+    palette,
+    options,
+    drafts,
+    focus: FIRST_FOCUS,
+    message: "",
+    copy: "idle",
+  };
 }
 
 const withRole = (
@@ -130,8 +147,17 @@ const withRole = (
   message: "",
 });
 
-/** Pure state transition. Never mutates; unknown pairs leave the state as it is. */
+/**
+ * Pure state transition. Never mutates; unknown pairs leave the state as it is.
+ * Every action except the two copy ones also brings the copy feedback back to idle.
+ */
 export function reduce(state: ViewState, action: ViewAction): ViewState {
+  const next = apply(state, action);
+  if (action.type === "copied" || action.type === "copyReset") return next;
+  return next.copy === "idle" ? next : { ...next, copy: "idle" };
+}
+
+function apply(state: ViewState, action: ViewAction): ViewState {
   switch (action.type) {
     case "draft": {
       const rgb = parseHex(action.text);
@@ -229,12 +255,9 @@ export function reduce(state: ViewState, action: ViewAction): ViewState {
       return { ...state, message };
     }
     case "copied":
-      return {
-        ...state,
-        message: action.ok
-          ? "Theme copied."
-          : "Copy failed. Select the code and copy it.",
-      };
+      return { ...state, copy: action.ok ? "copied" : "failed" };
+    case "copyReset":
+      return { ...state, copy: "idle" };
   }
 }
 
@@ -357,6 +380,15 @@ export function paletteView(state: ViewState): PaletteView {
     }),
     liveSummary: `${focusLabel}, ${focusRatio.toFixed(2)} to 1. ${verdictLine}.`,
     message: state.message,
+    copy: {
+      state: state.copy,
+      buttonLabel: state.copy === "copied" ? "Copied" : "Copy",
+      announcement: state.copy === "copied" ? "Theme copied." : "",
+      error:
+        state.copy === "failed"
+          ? "Copy failed. Select the code and copy it."
+          : "",
+    },
     scales,
     preview: {
       text: hexOf(palette.text.active),

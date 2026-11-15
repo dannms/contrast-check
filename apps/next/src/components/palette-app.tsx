@@ -67,12 +67,17 @@ export function PaletteApp({ palette, options }: Props) {
     );
   }, [view.query]);
 
+  // The "Copied" feedback goes back to "Copy" after two seconds.
+  const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(copyTimer.current), []);
   const copy = async () => {
+    clearTimeout(copyTimer.current);
     try {
       await navigator.clipboard.writeText(view.exportText);
-      dispatch({ type: "copied", ok: true });
+      act({ type: "copied", ok: true });
+      copyTimer.current = setTimeout(() => act({ type: "copyReset" }), 2000);
     } catch {
-      dispatch({ type: "copied", ok: false });
+      act({ type: "copied", ok: false });
     }
   };
 
@@ -98,7 +103,11 @@ export function PaletteApp({ palette, options }: Props) {
 
           <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
             <PalettePreview preview={view.preview} />
-            <ThemeExport exportText={view.exportText} onCopy={copy} />
+            <ThemeExport
+              exportText={view.exportText}
+              copy={view.copy}
+              onCopy={copy}
+            />
           </div>
         </main>
 
