@@ -486,31 +486,39 @@ describe("scales", () => {
       rgb(bgStep?.hex ?? "#000000"),
       rgb(DEFAULT_PALETTE.text.active),
     );
-    expect(bgStep?.ratio).toBe(`${expectedBg.toFixed(2)}:1`);
+    expect(bgStep?.ratio).toBe(expectedBg.toFixed(2));
 
     const primaryStep = strip("Primary")?.steps.find((s) => s.name === 950);
     const expectedPrimary = contrastRatio(
       rgb(primaryStep?.hex ?? "#000000"),
       rgb(DEFAULT_PALETTE.background.active),
     );
-    expect(primaryStep?.ratio).toBe(`${expectedPrimary.toFixed(2)}:1`);
+    expect(primaryStep?.ratio).toBe(expectedPrimary.toFixed(2));
+  });
+
+  it("shows only the number as the step ratio", () => {
+    const steps = paletteView(start()).scales.flatMap((s) => s.steps);
+    for (const step of steps) {
+      expect(step.ratio).toMatch(/^\d+\.\d{2}$/);
+      expect("useLabel" in step).toBe(false);
+    }
   });
 
   it("name each step with its hex, ratio and use spelled out", () => {
     const steps = paletteView(start()).scales.flatMap((s) => s.steps);
     const spoken = {
-      AAA: "AAA text",
-      AA: "AA text",
-      "Large · UI": "large text and UI",
-      Decor: "decorative",
+      "text-aaa": "AAA text",
+      "text-aa": "AA text",
+      "large-ui": "large text and UI",
+      decorative: "decorative",
     } as const;
     for (const step of steps) {
       expect(step.ariaLabel).toBe(
-        `${step.name}, ${step.hex}, ${step.ratio}, ${spoken[step.useLabel]}`,
+        `${step.name}, ${step.hex}, ${step.ratio}:1, ${spoken[step.use]}`,
       );
     }
-    expect(new Set(steps.map((s) => s.useLabel))).toEqual(
-      new Set(["AAA", "AA", "Large · UI", "Decor"]),
+    expect(new Set(steps.map((s) => s.use))).toEqual(
+      new Set(["text-aaa", "text-aa", "large-ui", "decorative"]),
     );
     const primary600 = paletteView(start()).scales[2]?.steps.find(
       (s) => s.name === 600,

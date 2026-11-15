@@ -8,51 +8,6 @@ type Props = {
   dispatch: Dispatch<ViewAction>;
 };
 
-const ICON_CLASS = "size-3 shrink-0";
-
-function UseIcon({ use }: { use: string }) {
-  if (use === "text-aaa" || use === "text-aa") {
-    return (
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 12 12"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className={ICON_CLASS}
-      >
-        <path d="m2 6.5 2.5 2.5L10 3.5" />
-      </svg>
-    );
-  }
-  if (use === "large-ui") {
-    return (
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 12 12"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className={ICON_CLASS}
-      >
-        <rect x="2.5" y="2.5" width="7" height="7" />
-      </svg>
-    );
-  }
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className={ICON_CLASS}
-    >
-      <path d="M2.5 6h7" />
-    </svg>
-  );
-}
-
 /** Five strips of 11 steps; each strip is a radio group with roving tabindex. */
 export function ScaleStrips({ scales, dispatch }: Props) {
   const refs = useRef<Record<string, (HTMLButtonElement | null)[]>>({});
@@ -132,10 +87,10 @@ export function ScaleStrips({ scales, dispatch }: Props) {
                   </span>
                   <span
                     aria-hidden="true"
-                    className="flex flex-wrap items-center gap-x-1 text-xs/4 text-ink-muted"
+                    data-testid="step-ratio"
+                    className="block text-xs/4 whitespace-nowrap text-ink-muted tabular-nums"
                   >
-                    <UseIcon use={step.use} />
-                    {step.useLabel}
+                    {step.ratio}
                   </span>
                 </button>
               ))}

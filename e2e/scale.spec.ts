@@ -36,3 +36,15 @@ test("Home and End move to the first and last step", async ({ page }) => {
   await page.keyboard.press("Home");
   await expect(group.getByRole("radio", { name: /^50,/ })).toBeChecked();
 });
+
+test("each step shows its ratio on one line at 390px", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const group = page.getByRole("radiogroup", { name: "Primary scale" });
+  const ratios = group.getByTestId("step-ratio");
+  await expect(ratios).toHaveCount(11);
+  for (const ratio of await ratios.all()) {
+    expect((await ratio.boundingBox())?.height).toBe(16);
+  }
+  await expect(ratios.first()).toHaveText(/^\d+\.\d{2}$/);
+});

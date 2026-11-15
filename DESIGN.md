@@ -84,8 +84,8 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - From `lg` each strip is `grid-cols-scale gap-x-6`: the label on the left, the steps on the right.
    - Steps: `grid-cols-6 gap-x-1 gap-y-2` on mobile (6 + 5); `md:grid-cols-11 md:gap-1`.
    - Each step is a `role="radio"` inside a `role="radiogroup"` named after the strip, with roving tabindex, arrow keys, Home and End. Selection follows focus.
-   - A step shows: a block `h-12 rounded-xs` with a 1px hairline border in the step's own color; the name (`mt-2 text-xs/4`); the use (`text-xs/4`, muted) with a `size-3` icon and text: check and "AAA" (7 or more), check and "AA" (4.5 or more), square and "Large · UI" (3 or more), dash and "Decor" (below 3).
-   - The accessible name is "<step>, <hex>, <ratio>, <use>" with the use spelled out: "AAA text", "AA text", "large text and UI" or "decorative" (for example "600, #2F5BD8, 5.56:1, AA text"). The visible use stays "AAA", "AA", "Large · UI", "Decor".
+   - A step shows: a block `h-12 rounded-xs` with a 1px hairline border in the step's own color; the name (`mt-2 text-xs/4`); and, below it, the ratio against the strip's reference color as a plain number with two decimals, without ":1" (`text-xs/4`, muted, `tabular-nums whitespace-nowrap`, no icon), for example "5.56". It never wraps, so every step has the same height.
+   - The accessible name is "<step>, <hex>, <ratio>, <use>" with the use spelled out: "AAA text", "AA text", "large text and UI" or "decorative" (for example "600, #2F5BD8, 5.56:1, AA text"). The classification (AAA text, AA text, large text and UI, decorative) lives only in the accessible name; nothing visible repeats it.
    - The active step: `outline-2 outline-offset-2` in ink, and its name in `font-medium`.
    - The background strip is annotated against the active text color; the other strips against the active background.
 7. **Preview and Export**: from `lg`, `grid grid-cols-2 gap-x-16 items-start` with the two sections side by side, Preview on the left. Below `lg`, stacked in that order. Each section: `mt-10 pt-8`, 1px hairline top border.

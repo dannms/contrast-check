@@ -82,31 +82,10 @@ function onKeyDown(event: KeyboardEvent, scale: Scale) {
             >
             <span
               aria-hidden="true"
-              class="flex flex-wrap items-center gap-x-1 text-xs/4 text-ink-muted"
+              data-testid="step-ratio"
+              class="block text-xs/4 whitespace-nowrap text-ink-muted tabular-nums"
+              >{{ step.ratio }}</span
             >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 12 12"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                class="size-3 shrink-0"
-              >
-                <path
-                  v-if="step.use === 'text-aaa' || step.use === 'text-aa'"
-                  d="m2 6.5 2.5 2.5L10 3.5"
-                />
-                <rect
-                  v-else-if="step.use === 'large-ui'"
-                  x="2.5"
-                  y="2.5"
-                  width="7"
-                  height="7"
-                />
-                <path v-else d="M2.5 6h7" />
-              </svg>
-              {{ step.useLabel }}
-            </span>
           </button>
         </div>
       </div>

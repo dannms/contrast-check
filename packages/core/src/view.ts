@@ -44,8 +44,6 @@ export type ViewAction =
   | { type: "fix"; pair: PairId }
   | { type: "copied"; ok: boolean };
 
-type UseLabel = "AAA" | "AA" | "Large · UI" | "Decor";
-
 export type PaletteView = {
   cssVars: Record<string, string>;
   colorScheme: "light" | "dark";
@@ -81,7 +79,6 @@ export type PaletteView = {
       hex: string;
       ratio: string;
       use: Use;
-      useLabel: UseLabel;
       checked: boolean;
       tabbable: boolean;
       ariaLabel: string;
@@ -241,13 +238,6 @@ export function reduce(state: ViewState, action: ViewAction): ViewState {
   }
 }
 
-const USE_LABEL: Record<Use, UseLabel> = {
-  "text-aaa": "AAA",
-  "text-aa": "AA",
-  "large-ui": "Large · UI",
-  decorative: "Decor",
-};
-
 const USE_SPOKEN: Record<Use, string> = {
   "text-aaa": "AAA text",
   "text-aa": "AA text",
@@ -318,17 +308,15 @@ export function paletteView(state: ViewState): PaletteView {
       label: `${capitalize(role)} scale`,
       steps: steps.map((s) => {
         const checked = s.hex === active;
-        const ratio = formatRatio(s.ratio);
-        const useLabel = USE_LABEL[s.use];
+        const ratio = s.ratio.toFixed(2);
         return {
           name: s.name,
           hex: s.hex,
           ratio,
           use: s.use,
-          useLabel,
           checked,
           tabbable: hasChecked ? checked : s.name === 50,
-          ariaLabel: `${s.name}, ${s.hex}, ${ratio}, ${USE_SPOKEN[s.use]}`,
+          ariaLabel: `${s.name}, ${s.hex}, ${ratio}:1, ${USE_SPOKEN[s.use]}`,
         };
       }),
     };
