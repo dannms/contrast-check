@@ -47,3 +47,18 @@ test("only failing rows have a Fix button", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("button", { name: /^Fix / })).toHaveCount(0);
 });
+
+test("focus moves to the pair after a fix", async ({ page }) => {
+  await page.goto(FAILING);
+  const fix = page.getByRole("button", { name: "Fix accent as text" });
+  await fix.focus();
+  await expect(fix).toBeFocused();
+  await page.keyboard.press("Enter");
+
+  const pair = page.getByRole("button", {
+    name: "Accent as text",
+    exact: true,
+  });
+  await expect(pair).toBeFocused();
+  await expect(pair).toHaveAttribute("aria-pressed", "true");
+});

@@ -73,6 +73,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
             <td class="pr-4">
               <button
                 type="button"
+                :data-pair-button="pair.id"
                 :aria-pressed="pair.focused ? 'true' : 'false'"
                 :class="`block w-full cursor-pointer text-left ${
                   pair.focused ? 'font-medium underline underline-offset-4' : ''
@@ -108,6 +109,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
               <button
                 v-if="!pair.pass"
                 type="button"
+                :data-fix="pair.id"
                 :aria-label="pair.fixLabel"
                 :class="FILLED_BUTTON"
                 @click="emit('dispatch', { type: 'fix', pair: pair.id })"

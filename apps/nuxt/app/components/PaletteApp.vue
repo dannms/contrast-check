@@ -14,8 +14,15 @@ const props = defineProps<{ palette: Palette; options: PaletteOptions }>();
 const state = shallowRef(initialViewState(props.palette, props.options));
 const view = computed(() => paletteView(state.value));
 
-function dispatch(action: ViewAction) {
+// After a fix the button disappears: the focus goes to the pair button instead.
+async function dispatch(action: ViewAction) {
   state.value = reduce(state.value, action);
+  if (action.type !== "fix") return;
+  await nextTick();
+  if (document.querySelector(`[data-fix="${action.pair}"]`)) return;
+  document
+    .querySelector<HTMLElement>(`[data-pair-button="${action.pair}"]`)
+    ?.focus();
 }
 
 async function copy() {

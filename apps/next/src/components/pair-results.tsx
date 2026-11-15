@@ -112,6 +112,7 @@ export function PairResults({ view, dispatch }: Props) {
                   <td className="pr-4">
                     <button
                       type="button"
+                      data-pair-button={pair.id}
                       aria-pressed={pair.focused}
                       onClick={() => dispatch({ type: "focus", pair: pair.id })}
                       className={`block w-full cursor-pointer text-left ${
@@ -138,6 +139,7 @@ export function PairResults({ view, dispatch }: Props) {
                     {pair.pass ? null : (
                       <button
                         type="button"
+                        data-fix={pair.id}
                         aria-label={pair.fixLabel}
                         onClick={() => dispatch({ type: "fix", pair: pair.id })}
                         className={FILLED_BUTTON}

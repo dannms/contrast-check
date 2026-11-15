@@ -2,12 +2,21 @@
 
 import {
   initialViewState,
+  type PairId,
   type Palette,
   type PaletteOptions,
   paletteView,
   reduce,
+  type ViewAction,
 } from "@contrast-check/core";
-import { type CSSProperties, useEffect, useMemo, useReducer } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import { PairResults } from "./pair-results";
 import { PaletteActions } from "./palette-actions";
 import { PaletteFields } from "./palette-fields";
@@ -23,6 +32,21 @@ export function PaletteApp({ palette, options }: Props) {
     initialViewState(palette, options),
   );
   const view = useMemo(() => paletteView(state), [state]);
+
+  // After a fix the button disappears: the focus goes to the pair button instead.
+  const pendingFocus = useRef<PairId | null>(null);
+  const act = useCallback((action: ViewAction) => {
+    if (action.type === "fix") pendingFocus.current = action.pair;
+    dispatch(action);
+  }, []);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs after each state change to move the focus
+  useEffect(() => {
+    const id = pendingFocus.current;
+    if (!id) return;
+    pendingFocus.current = null;
+    if (document.querySelector(`[data-fix="${id}"]`)) return;
+    document.querySelector<HTMLElement>(`[data-pair-button="${id}"]`)?.focus();
+  }, [state]);
 
   // Mirror the theme on <html> so overscroll shows the surface color.
   useEffect(() => {
@@ -67,10 +91,10 @@ export function PaletteApp({ palette, options }: Props) {
             <p className="text-xs/4 text-ink-muted">WCAG 2.2</p>
           </header>
 
-          <PaletteFields fields={view.fields} dispatch={dispatch} />
-          <PaletteActions options={view.options} dispatch={dispatch} />
-          <PairResults view={view} dispatch={dispatch} />
-          <ScaleStrips scales={view.scales} dispatch={dispatch} />
+          <PaletteFields fields={view.fields} dispatch={act} />
+          <PaletteActions options={view.options} dispatch={act} />
+          <PairResults view={view} dispatch={act} />
+          <ScaleStrips scales={view.scales} dispatch={act} />
 
           <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
             <PalettePreview preview={view.preview} />
