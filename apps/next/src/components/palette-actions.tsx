@@ -24,11 +24,11 @@ export function PaletteActions({ options, dispatch }: Props) {
         Swap text and background
       </button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row md:items-center md:gap-2">
         <label htmlFor="level" className="text-xs/4 text-ink-muted">
           Level
         </label>
-        <div className="relative flex-1 md:w-32 md:flex-none">
+        <div className="relative mt-2 md:mt-0 md:w-32">
           <select
             id="level"
             value={options.level}

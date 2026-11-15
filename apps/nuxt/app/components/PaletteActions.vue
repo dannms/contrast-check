@@ -17,9 +17,9 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
       Swap text and background
     </button>
 
-    <div class="flex items-center gap-2">
+    <div class="flex flex-col md:flex-row md:items-center md:gap-2">
       <label for="level" class="text-xs/4 text-ink-muted">Level</label>
-      <div class="relative flex-1 md:w-32 md:flex-none">
+      <div class="relative mt-2 md:mt-0 md:w-32">
         <select
           id="level"
           class="cc-outline h-12 w-full cursor-pointer appearance-none rounded-xs border border-line bg-transparent pr-10 pl-4 text-sm/6 text-ink forced-colors:appearance-auto lg:h-10"

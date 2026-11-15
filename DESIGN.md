@@ -64,7 +64,7 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - Error line, always present: `mt-2 min-h-4 text-xs/4`, empty while the hex is valid. The input points to it and to the hint with `aria-describedby`. It never changes the height of the group.
 4. **Actions**: `mt-6`. Mobile: stacked, full width, `gap-2`. From `md`: `flex flex-wrap items-center gap-x-6 gap-y-2`. All controls are `h-12 lg:h-10`.
    - Swap text and background: outline button.
-   - Level: a visible label "Level" (`text-xs/4`, muted) beside the select AA/AAA (`md:w-32`) with the chevron described below.
+   - Level: a visible label "Level" (`text-xs/4`, muted) and the select AA/AAA with the chevron described below. Below `md` the label sits above the select (`mt-2` between them) and the select takes the full width, on the same left edge as Swap and the switch. From `md` the label sits beside the select, which is `md:w-32`, all on one line.
    - Accent as text: a `button` with `role="switch"` and `aria-checked`. Track `w-8 h-4` with a 1px `--cc-line` border and a knob in ink. On: track in ink, knob in surface, moved 16px.
    - The Suggest button and the note "Changes only the lightness…" are gone. The Fix button of each pair replaces Suggest.
 5. **Results**: `mt-8 pt-8`, 1px hairline top border. Mobile: stacked, `gap-y-8`. From `lg`: `grid-cols-5 gap-x-16`; the pair in focus takes `col-span-2` on the left and the table takes `col-span-3` on the right.
