@@ -87,7 +87,7 @@ test("contrast: partial hex keeps the last valid palette", async ({ page }) => {
   await page.goto("/");
   await field(page, "primary").fill("#12");
   await expect(field(page, "primary")).toHaveAttribute("aria-invalid", "true");
-  const rows = page.locator('[data-testid^="pair-"]');
+  const rows = page.locator('tr[data-testid^="pair-"]');
   await expect(rows).toHaveCount(6);
   for (const row of await rows.all()) {
     await expect(row).toContainText(/\d+\.\d{2}:1/);

@@ -18,3 +18,38 @@ test("only the name of the pair in focus is underlined", async ({ page }) => {
     "none",
   );
 });
+
+const FAILING = "/?primary=93c5fd&accent=f97316";
+
+test("rows have the same height with and without a Fix button", async ({
+  page,
+}) => {
+  await page.goto(FAILING);
+  const rows = page.locator('tr[data-testid^="pair-"]');
+  await expect(rows).toHaveCount(6);
+  const heights: (number | undefined)[] = [];
+  for (const row of await rows.all()) {
+    heights.push((await row.boundingBox())?.height);
+  }
+  expect(new Set(heights).size).toBe(1);
+});
+
+for (const width of [390, 1280]) {
+  test(`a fix that removes its button does not move the next rows at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(FAILING);
+    const next = pairRow(page, "label-on-secondary");
+    const top = () =>
+      next.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    const before = await top();
+    await page
+      .getByRole("button", { name: "Fix primary against background" })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Fix primary against background" }),
+    ).toHaveCount(0);
+    expect(await top()).toBe(before);
+  });
+}

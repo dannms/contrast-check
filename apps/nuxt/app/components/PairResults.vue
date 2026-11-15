@@ -28,7 +28,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
           >:1</span
         >
       </p>
-      <p data-testid="focus-verdict" class="mt-4 max-w-md text-sm/6 text-ink">
+      <p data-testid="focus-verdict" class="mt-4 min-h-12 max-w-md text-sm/6 text-ink">
         {{ view.focus.verdict }}
       </p>
       <p
@@ -58,7 +58,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
               Minimum
             </th>
             <th scope="col" class="pr-4 pb-2 font-normal">Result</th>
-            <th scope="col" class="pb-2 font-normal">
+            <th scope="col" class="w-16 pb-2 font-normal">
               <span class="sr-only">Fix</span>
             </th>
           </tr>
@@ -68,7 +68,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
             v-for="pair in view.pairs"
             :key="pair.id"
             :data-testid="`pair-${pair.id}`"
-            class="h-12 border-t border-hairline lg:h-10"
+            class="relative h-12 before:absolute before:inset-x-0 before:top-0 before:border-t before:border-hairline lg:h-10"
           >
             <td class="pr-4">
               <button
@@ -109,7 +109,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
                 {{ pair.pass ? "Pass" : "Fail" }}
               </span>
             </td>
-            <td class="text-right">
+            <td class="w-16 text-right">
               <button
                 v-if="!pair.pass"
                 type="button"

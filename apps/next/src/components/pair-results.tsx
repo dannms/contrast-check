@@ -56,7 +56,7 @@ export function PairResults({ view, dispatch }: Props) {
           </p>
           <p
             data-testid="focus-verdict"
-            className="mt-4 max-w-md text-sm/6 text-ink"
+            className="mt-4 min-h-12 max-w-md text-sm/6 text-ink"
           >
             {focus.verdict}
           </p>
@@ -97,7 +97,7 @@ export function PairResults({ view, dispatch }: Props) {
                 <th scope="col" className="pr-4 pb-2 font-normal">
                   Result
                 </th>
-                <th scope="col" className="pb-2 font-normal">
+                <th scope="col" className="w-16 pb-2 font-normal">
                   <span className="sr-only">Fix</span>
                 </th>
               </tr>
@@ -107,7 +107,7 @@ export function PairResults({ view, dispatch }: Props) {
                 <tr
                   key={pair.id}
                   data-testid={`pair-${pair.id}`}
-                  className="h-12 border-t border-hairline lg:h-10"
+                  className="relative h-12 before:absolute before:inset-x-0 before:top-0 before:border-t before:border-hairline lg:h-10"
                 >
                   <td className="pr-4">
                     <button
@@ -143,7 +143,7 @@ export function PairResults({ view, dispatch }: Props) {
                       {pair.pass ? "Pass" : "Fail"}
                     </span>
                   </td>
-                  <td className="text-right">
+                  <td className="w-16 text-right">
                     {pair.pass ? null : (
                       <button
                         type="button"
