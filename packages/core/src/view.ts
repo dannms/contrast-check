@@ -201,7 +201,15 @@ export function reduce(state: ViewState, action: ViewAction): ViewState {
       const results = checkPalette(state.palette, state.options);
       const pair = results.find((r) => r.id === action.pair);
       if (!pair) return state;
-      const result = fixPair(state.palette, action.pair, state.options);
+      // The role is fixed by its strictest failing pair; a tie keeps the clicked one.
+      const strictest = results.reduce(
+        (best, r) =>
+          !r.pass && r.fixRole === pair.fixRole && r.threshold > best.threshold
+            ? r
+            : best,
+        pair,
+      );
+      const result = fixPair(state.palette, strictest.id, state.options);
       if (result.palette) {
         const role = pair.fixRole;
         const active = result.palette[role].active;

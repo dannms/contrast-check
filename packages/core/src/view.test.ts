@@ -247,6 +247,45 @@ describe("reduce", () => {
     expect(state.drafts.accent).toBe(state.palette.accent.active);
   });
 
+  it("fixes a role by its strictest failing pair", () => {
+    const orange = makePalette({
+      text: "#1C1D22",
+      background: "#FAFAF7",
+      primary: "#2F5BD8",
+      secondary: "#E9ECF5",
+      accent: "#F97316",
+    });
+    const state = run(start(orange), {
+      type: "fix",
+      pair: "accent-vs-background",
+    });
+    const after = checkPalette(state.palette, state.options);
+    const pass = (id: string) => after.find((r) => r.id === id)?.pass;
+    expect(pass("accent-vs-background")).toBe(true);
+    expect(pass("accent-as-text")).toBe(true);
+    expect(state.focus).toBe("accent-vs-background");
+    expect(state.message).toBe(`Accent set to ${state.palette.accent.active}.`);
+  });
+
+  it("with accent as text off the same fix only asks for 3:1", () => {
+    const orange = makePalette({
+      text: "#1C1D22",
+      background: "#FAFAF7",
+      primary: "#2F5BD8",
+      secondary: "#E9ECF5",
+      accent: "#F97316",
+    });
+    const state = run(start(orange, { level: "AA", accentAsText: false }), {
+      type: "fix",
+      pair: "accent-vs-background",
+    });
+    const pair = checkPalette(state.palette, state.options).find(
+      (r) => r.id === "accent-vs-background",
+    );
+    expect(pair?.pass).toBe(true);
+    expect(pair?.ratio).toBeLessThan(4.5);
+  });
+
   it("a blocked fix leaves the palette and says what it would break", () => {
     const blocked = makePalette({
       text: "#CCCCCC",

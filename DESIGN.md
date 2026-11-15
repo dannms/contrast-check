@@ -79,6 +79,7 @@ Mobile-first, with `md` (768px) and `lg` (1024px) as the breakpoints. The sectio
    - The pair name is a full-width button with `aria-pressed` that puts the pair in focus. The pair in focus is `font-medium` and underlined (`underline-offset-4`).
    - Below `md` the pair button has a second line, `text-xs/4` muted: "5.56:1 · min 4.5:1".
    - Fix: a filled button only on failing rows, with the accessible name "Fix <pair name in lowercase>", with "vs" replaced by "against" (for example "Fix accent against background").
+   - A fix repairs the role by its strictest failing pair: among the failing pairs with the same role to fix, the one with the highest minimum; on a tie, the clicked pair. For example, Fix on "Accent against background" also lifts the accent to 4.5:1 when "Accent as text" fails too, and asks only for 3:1 when that pair is off. The pair in focus and the destination of the focus stay the clicked pair, and the message stays "<Role> set to #HEX.".
 6. **Scales**: `mt-10 pt-8`, 1px hairline top border; label "Scales · 11 steps from each seed, in OKLCH". Then, `mt-6`, five strips with `gap-y-6`.
    - From `lg` each strip is `grid-cols-scale gap-x-6`: the label on the left, the steps on the right.
    - Steps: `grid-cols-6 gap-x-1 gap-y-2` on mobile (6 + 5); `md:grid-cols-11 md:gap-1`.
