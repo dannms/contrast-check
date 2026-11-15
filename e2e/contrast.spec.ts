@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { field, focusRatio, pairRow } from "./helpers";
+import { field, focusRatio, gotoReady, pairRow } from "./helpers";
 
 test("the default palette passes AA and shows the first pair in focus", async ({
   page,
 }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await expect(page.getByTestId("palette-verdict")).toHaveText(
     "Passes AA · 6 of 6 pairs",
   );
@@ -12,7 +12,7 @@ test("the default palette passes AA and shows the first pair in focus", async ({
 });
 
 test("typing colors updates the ratio", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await field(page, "text").fill("#000000");
   await field(page, "background").fill("#FFFFFF");
   await expect(page.getByTestId("focus-ratio")).toHaveText("21.00:1");
@@ -20,7 +20,7 @@ test("typing colors updates the ratio", async ({ page }) => {
 });
 
 test("invalid hex shows an accessible error", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   const input = field(page, "primary");
   await input.fill("#12");
   await expect(input).toHaveAttribute("aria-invalid", "true");
@@ -30,7 +30,7 @@ test("invalid hex shows an accessible error", async ({ page }) => {
 });
 
 test("color picker stays in sync with the hex input", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await page.getByLabel("Accent color picker").fill("#ff0000");
   await expect(field(page, "accent")).toHaveValue("#FF0000");
   await field(page, "accent").fill("#00ff00");
@@ -38,7 +38,7 @@ test("color picker stays in sync with the hex input", async ({ page }) => {
 });
 
 test("swap exchanges text and background", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await field(page, "text").fill("#112233");
   await field(page, "background").fill("#FFEEDD");
   await page.getByRole("button", { name: "Swap text and background" }).click();
@@ -47,21 +47,21 @@ test("swap exchanges text and background", async ({ page }) => {
 });
 
 test("level AAA raises the text minimum", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await page.getByLabel("Level").selectOption("AAA");
   await expect(pairRow(page, "text-on-background")).toContainText("7:1");
   await expect(page.getByTestId("palette-verdict")).toContainText("AAA");
 });
 
 test("turning accent as text off removes its pair", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await expect(pairRow(page, "accent-as-text")).toBeVisible();
   await page.getByRole("switch", { name: "Accent as text" }).click();
   await expect(pairRow(page, "accent-as-text")).toHaveCount(0);
 });
 
 test("state is read from the url and written back", async ({ page }) => {
-  await page.goto("/?text=767676&background=ffffff");
+  await gotoReady(page, "/?text=767676&background=ffffff");
   await expect(field(page, "text")).toHaveValue("#767676");
   await expect(field(page, "background")).toHaveValue("#FFFFFF");
   await expect(page.getByTestId("focus-ratio")).toHaveText("4.54:1");
@@ -72,7 +72,7 @@ test("state is read from the url and written back", async ({ page }) => {
 });
 
 test("shows the chosen surface exactly", async ({ page }) => {
-  await page.goto("/?text=000000&background=ffffff");
+  await gotoReady(page, "/?text=000000&background=ffffff");
   await expect(page.getByRole("heading", { level: 1 })).toHaveCSS(
     "color",
     "rgb(0, 0, 0)",
@@ -84,7 +84,7 @@ test("shows the chosen surface exactly", async ({ page }) => {
 });
 
 test("contrast: partial hex keeps the last valid palette", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await field(page, "primary").fill("#12");
   await expect(field(page, "primary")).toHaveAttribute("aria-invalid", "true");
   const rows = page.locator('tr[data-testid^="pair-"]');
@@ -99,11 +99,11 @@ test("contrast: partial hex keeps the last valid palette", async ({ page }) => {
 });
 
 test("contrast: legacy and malformed urls load", async ({ page }) => {
-  await page.goto("/?fg=777&bg=fff");
+  await gotoReady(page, "/?fg=777&bg=fff");
   await expect(field(page, "text")).toHaveValue("#777777");
   await expect(field(page, "background")).toHaveValue("#FFFFFF");
 
-  await page.goto("/?primary=zzz&level=x");
+  await gotoReady(page, "/?primary=zzz&level=x");
   await expect(field(page, "primary")).toHaveValue("#2F5BD8");
   await expect(page.getByLabel("Level")).toHaveValue("AA");
   await expect(page.getByTestId("palette-verdict")).toHaveText(
@@ -112,7 +112,7 @@ test("contrast: legacy and malformed urls load", async ({ page }) => {
 });
 
 test("the live summary announces the state", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   const summary = page.getByTestId("live-summary");
   await expect(summary).toHaveText(
     "Text on background, 16.09 to 1. Passes AA · 6 of 6 pairs.",

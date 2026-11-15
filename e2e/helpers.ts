@@ -23,3 +23,14 @@ export async function focusRatio(page: Page): Promise<number> {
   const text = (await page.getByTestId("focus-ratio").textContent()) ?? "";
   return Number.parseFloat(text);
 }
+
+/**
+ * Opens a page and waits until the app has hydrated, so the first interaction
+ * is not lost to a handler that is not attached yet.
+ */
+export async function gotoReady(page: Page, url: string): Promise<void> {
+  await page.goto(url);
+  await page
+    .locator('[data-testid="app-root"][data-hydrated="true"]')
+    .waitFor();
+}

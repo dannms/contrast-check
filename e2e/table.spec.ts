@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { pairRow } from "./helpers";
+import { gotoReady, pairRow } from "./helpers";
 
 test("only the name of the pair in focus is underlined", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await gotoReady(page, "/");
   const row = pairRow(page, "text-on-background");
   const name = row.getByTestId("pair-name");
   const meta = row.getByTestId("pair-meta");
@@ -24,7 +24,7 @@ const FAILING = "/?primary=93c5fd&accent=f97316";
 test("rows have the same height with and without a Fix button", async ({
   page,
 }) => {
-  await page.goto(FAILING);
+  await gotoReady(page, FAILING);
   const rows = page.locator('tr[data-testid^="pair-"]');
   await expect(rows).toHaveCount(6);
   const heights: (number | undefined)[] = [];
@@ -39,7 +39,7 @@ for (const width of [390, 1280]) {
     page,
   }) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto(FAILING);
+    await gotoReady(page, FAILING);
     const next = pairRow(page, "label-on-secondary");
     const top = () =>
       next.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);

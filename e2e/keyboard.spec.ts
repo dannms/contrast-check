@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { gotoReady } from "./helpers";
 
 test("tab order follows the screen and Enter focuses a pair", async ({
   page,
 }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
   const inOrder = [

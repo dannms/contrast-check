@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { pairRow } from "./helpers";
+import { gotoReady, pairRow } from "./helpers";
 
 const FAILING = "/?primary=93c5fd&accent=f97316";
 const WAS_PASSING = [
@@ -11,7 +11,7 @@ const WAS_PASSING = [
 test("fix repairs one pair without breaking the ones that passed", async ({
   page,
 }) => {
-  await page.goto(FAILING);
+  await gotoReady(page, FAILING);
   await expect(page.getByTestId("palette-verdict")).toHaveText(
     "Fails AA · 3 of 6 pairs fail",
   );
@@ -30,7 +30,7 @@ test("fix repairs one pair without breaking the ones that passed", async ({
 });
 
 test("fix: blocked fix keeps the layout", async ({ page }) => {
-  await page.goto(FAILING);
+  await gotoReady(page, FAILING);
   const row = pairRow(page, "text-on-background");
   const before = await row.boundingBox();
   await page
@@ -42,14 +42,14 @@ test("fix: blocked fix keeps the layout", async ({ page }) => {
 });
 
 test("only failing rows have a Fix button", async ({ page }) => {
-  await page.goto(FAILING);
+  await gotoReady(page, FAILING);
   await expect(page.getByRole("button", { name: /^Fix / })).toHaveCount(3);
-  await page.goto("/");
+  await gotoReady(page, "/");
   await expect(page.getByRole("button", { name: /^Fix / })).toHaveCount(0);
 });
 
 test("focus moves to the pair after a fix", async ({ page }) => {
-  await page.goto(FAILING);
+  await gotoReady(page, FAILING);
   const fix = page.getByRole("button", { name: "Fix accent as text" });
   await fix.focus();
   await expect(fix).toBeFocused();

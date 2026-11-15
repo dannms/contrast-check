@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { gotoReady } from "./helpers";
 
 test("the export shows the theme with the label aliases", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   const code = page.getByTestId("export-code");
   await expect(code).toContainText("@theme {");
   await expect(code).toContainText("--color-primary-label");
@@ -12,7 +13,7 @@ test("copy confirms on the button and goes back to Copy", async ({
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/");
+  await gotoReady(page, "/");
   const button = page.getByTestId("copy-button");
   await expect(button).toHaveText("Copy");
   const before = (await button.boundingBox())?.width;
@@ -32,7 +33,7 @@ test("copy confirms on the button and goes back to Copy", async ({
 });
 
 test("copy failure shows the error under the header", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await page.evaluate(() => {
     Object.defineProperty(navigator, "clipboard", {
       value: { writeText: () => Promise.reject(new Error("denied")) },

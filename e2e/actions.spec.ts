@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { gotoReady } from "./helpers";
 
 test("on a phone the actions share the same left edge", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await gotoReady(page, "/");
   const left = async (locator: ReturnType<typeof page.locator>) =>
     (await locator.boundingBox())?.x;
 
@@ -27,7 +28,7 @@ test("on a phone the actions share the same left edge", async ({ page }) => {
 
 test("from md the level label sits beside the select", async ({ page }) => {
   await page.setViewportSize({ width: 800, height: 900 });
-  await page.goto("/");
+  await gotoReady(page, "/");
   const label = await page.getByText("Level", { exact: true }).boundingBox();
   const box = await page.getByLabel("Level").boundingBox();
   expect(label?.y).toBeLessThan((box?.y ?? 0) + (box?.height ?? 0));

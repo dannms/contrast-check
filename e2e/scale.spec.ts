@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { field, focusRatio } from "./helpers";
+import { field, focusRatio, gotoReady } from "./helpers";
 
 test("a scale step is selected by the arrow keys and sets the role", async ({
   page,
 }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   const group = page.getByRole("radiogroup", { name: "Primary scale" });
   const step600 = group.getByRole("radio", { name: /^600,/ });
   await expect(step600).toBeChecked();
@@ -28,7 +28,7 @@ test("a scale step is selected by the arrow keys and sets the role", async ({
 });
 
 test("Home and End move to the first and last step", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   const group = page.getByRole("radiogroup", { name: "Primary scale" });
   await group.getByRole("radio", { name: /^600,/ }).focus();
   await page.keyboard.press("End");
@@ -39,7 +39,7 @@ test("Home and End move to the first and last step", async ({ page }) => {
 
 test("each step shows its ratio on one line at 390px", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await gotoReady(page, "/");
   const group = page.getByRole("radiogroup", { name: "Primary scale" });
   const ratios = group.getByTestId("step-ratio");
   await expect(ratios).toHaveCount(11);

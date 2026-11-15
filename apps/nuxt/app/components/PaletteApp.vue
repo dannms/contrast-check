@@ -40,12 +40,17 @@ async function copy() {
   }
 }
 
+// Tells the tests (and anything else) that the handlers are attached.
+const hydrated = ref(false);
+
 const rootStyle = computed(() => ({
   ...view.value.cssVars,
   colorScheme: view.value.colorScheme,
 }));
 
 onMounted(() => {
+  hydrated.value = true;
+
   // Mirror the theme on <html> so overscroll shows the surface color.
   watch(
     view,
@@ -78,6 +83,7 @@ onMounted(() => {
 <template>
   <div
     data-testid="app-root"
+    :data-hydrated="hydrated ? 'true' : 'false'"
     :style="rootStyle"
     class="min-h-dvh bg-surface text-ink"
   >

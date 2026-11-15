@@ -16,6 +16,7 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import { PairResults } from "./pair-results";
 import { PaletteActions } from "./palette-actions";
@@ -32,6 +33,10 @@ export function PaletteApp({ palette, options }: Props) {
     initialViewState(palette, options),
   );
   const view = useMemo(() => paletteView(state), [state]);
+
+  // Tells the tests (and anything else) that the handlers are attached.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   // After a fix the button disappears: the focus goes to the pair button instead.
   const pendingFocus = useRef<PairId | null>(null);
@@ -84,6 +89,7 @@ export function PaletteApp({ palette, options }: Props) {
   return (
     <div
       data-testid="app-root"
+      data-hydrated={hydrated ? "true" : "false"}
       style={
         { ...view.cssVars, colorScheme: view.colorScheme } as CSSProperties
       }
