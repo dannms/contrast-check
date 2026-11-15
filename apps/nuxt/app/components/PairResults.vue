@@ -44,7 +44,7 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
       <p data-testid="palette-verdict" class="text-sm/6 font-medium">
         {{ view.paletteVerdict }}
       </p>
-      <table class="mt-4 w-full border-collapse text-left text-sm/6">
+      <table class="mt-4 w-full border-separate border-spacing-0 text-left text-sm/6">
         <caption class="sr-only">
           Palette pairs at {{ view.options.level }}
         </caption>
@@ -68,9 +68,9 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
             v-for="pair in view.pairs"
             :key="pair.id"
             :data-testid="`pair-${pair.id}`"
-            class="relative h-12 before:absolute before:inset-x-0 before:top-0 before:border-t before:border-hairline lg:h-10"
+            
           >
-            <td class="pr-4">
+            <td class="h-12 border-t border-hairline lg:h-10 pr-4">
               <button
                 type="button"
                 :data-pair-button="pair.id"
@@ -91,9 +91,9 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
                 >
               </button>
             </td>
-            <td class="hidden pr-4 md:table-cell">{{ pair.ratio }}</td>
-            <td class="hidden pr-4 md:table-cell">{{ pair.minimum }}</td>
-            <td class="pr-4">
+            <td class="hidden h-12 border-t border-hairline lg:h-10 pr-4 md:table-cell">{{ pair.ratio }}</td>
+            <td class="hidden h-12 border-t border-hairline lg:h-10 pr-4 md:table-cell">{{ pair.minimum }}</td>
+            <td class="h-12 border-t border-hairline lg:h-10 pr-4">
               <span class="flex items-center gap-2 font-medium">
                 <svg
                   aria-hidden="true"
@@ -109,13 +109,13 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
                 {{ pair.pass ? "Pass" : "Fail" }}
               </span>
             </td>
-            <td class="w-16 text-right">
+            <td class="h-12 border-t border-hairline lg:h-10 w-16 text-right">
               <button
                 v-if="!pair.pass"
                 type="button"
                 :data-fix="pair.id"
                 :aria-label="pair.fixLabel"
-                :class="FILLED_BUTTON"
+                :class="`${FILLED_BUTTON} -my-px`"
                 @click="emit('dispatch', { type: 'fix', pair: pair.id })"
               >
                 Fix

@@ -73,7 +73,7 @@ export function PairResults({ view, dispatch }: Props) {
           <p data-testid="palette-verdict" className="text-sm/6 font-medium">
             {paletteVerdict}
           </p>
-          <table className="mt-4 w-full border-collapse text-left text-sm/6">
+          <table className="mt-4 w-full border-separate border-spacing-0 text-left text-sm/6">
             <caption className="sr-only">
               Palette pairs at {options.level}
             </caption>
@@ -104,12 +104,8 @@ export function PairResults({ view, dispatch }: Props) {
             </thead>
             <tbody>
               {pairs.map((pair) => (
-                <tr
-                  key={pair.id}
-                  data-testid={`pair-${pair.id}`}
-                  className="relative h-12 before:absolute before:inset-x-0 before:top-0 before:border-t before:border-hairline lg:h-10"
-                >
-                  <td className="pr-4">
+                <tr key={pair.id} data-testid={`pair-${pair.id}`}>
+                  <td className="h-12 border-t border-hairline lg:h-10 pr-4">
                     <button
                       type="button"
                       data-pair-button={pair.id}
@@ -135,22 +131,26 @@ export function PairResults({ view, dispatch }: Props) {
                       </span>
                     </button>
                   </td>
-                  <td className="hidden pr-4 md:table-cell">{pair.ratio}</td>
-                  <td className="hidden pr-4 md:table-cell">{pair.minimum}</td>
-                  <td className="pr-4">
+                  <td className="hidden h-12 border-t border-hairline lg:h-10 pr-4 md:table-cell">
+                    {pair.ratio}
+                  </td>
+                  <td className="hidden h-12 border-t border-hairline lg:h-10 pr-4 md:table-cell">
+                    {pair.minimum}
+                  </td>
+                  <td className="h-12 border-t border-hairline lg:h-10 pr-4">
                     <span className="flex items-center gap-2 font-medium">
                       <ResultIcon pass={pair.pass} />
                       {pair.pass ? "Pass" : "Fail"}
                     </span>
                   </td>
-                  <td className="w-16 text-right">
+                  <td className="h-12 border-t border-hairline lg:h-10 w-16 text-right">
                     {pair.pass ? null : (
                       <button
                         type="button"
                         data-fix={pair.id}
                         aria-label={pair.fixLabel}
                         onClick={() => dispatch({ type: "fix", pair: pair.id })}
-                        className={FILLED_BUTTON}
+                        className={`${FILLED_BUTTON} -my-px`}
                       >
                         Fix
                       </button>

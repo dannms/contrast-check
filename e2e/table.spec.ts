@@ -53,3 +53,17 @@ for (const width of [390, 1280]) {
     expect(await top()).toBe(before);
   });
 }
+
+test("each header sits over its column", async ({ page }) => {
+  await gotoReady(page, "/?primary=93c5fd&accent=f97316");
+  const row = pairRow(page, "text-on-background");
+  const cells = row.getByRole("cell");
+  const headers = ["Pair", "Ratio", "Minimum", "Result"];
+  for (const [index, name] of headers.entries()) {
+    const header = await page
+      .getByRole("columnheader", { name, exact: true })
+      .boundingBox();
+    const cell = await cells.nth(index).boundingBox();
+    expect(header?.x).toBe(cell?.x);
+  }
+});
