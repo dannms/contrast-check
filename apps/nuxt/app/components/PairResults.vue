@@ -75,14 +75,18 @@ const emit = defineEmits<{ dispatch: [action: ViewAction] }>();
                 type="button"
                 :data-pair-button="pair.id"
                 :aria-pressed="pair.focused ? 'true' : 'false'"
-                :class="`block w-full cursor-pointer text-left ${
-                  pair.focused ? 'font-medium underline underline-offset-4' : ''
-                }`"
+                class="block w-full cursor-pointer text-left"
                 @click="emit('dispatch', { type: 'focus', pair: pair.id })"
               >
-                {{ pair.label
-                }}<span
-                  class="block text-xs/4 font-normal text-ink-muted no-underline md:hidden"
+                <span
+                  data-testid="pair-name"
+                  :class="
+                    pair.focused ? 'font-medium underline underline-offset-4' : ''
+                  "
+                  >{{ pair.label }}</span
+                ><span
+                  data-testid="pair-meta"
+                  class="block text-xs/4 text-ink-muted md:hidden"
                   >{{ pair.meta }}</span
                 >
               </button>

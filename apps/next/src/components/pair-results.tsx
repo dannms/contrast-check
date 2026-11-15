@@ -115,14 +115,22 @@ export function PairResults({ view, dispatch }: Props) {
                       data-pair-button={pair.id}
                       aria-pressed={pair.focused}
                       onClick={() => dispatch({ type: "focus", pair: pair.id })}
-                      className={`block w-full cursor-pointer text-left ${
-                        pair.focused
-                          ? "font-medium underline underline-offset-4"
-                          : ""
-                      }`}
+                      className="block w-full cursor-pointer text-left"
                     >
-                      {pair.label}
-                      <span className="block text-xs/4 font-normal text-ink-muted no-underline md:hidden">
+                      <span
+                        data-testid="pair-name"
+                        className={
+                          pair.focused
+                            ? "font-medium underline underline-offset-4"
+                            : ""
+                        }
+                      >
+                        {pair.label}
+                      </span>
+                      <span
+                        data-testid="pair-meta"
+                        className="block text-xs/4 text-ink-muted md:hidden"
+                      >
                         {pair.meta}
                       </span>
                     </button>
